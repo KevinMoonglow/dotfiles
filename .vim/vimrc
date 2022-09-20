@@ -355,6 +355,6 @@ if has("nvim")
 	nn <leader>gg <cmd>Neogit<cr>
 	nn <leader>gc <cmd>Neogit commit<cr>
 else
-	nn <leader>gg <cmd>echo "Can't do this without NeoVim"
-	nn <leader>gc <cmd>echo "Can't do this without NeoVim"
+	nn <leader>gg <cmd>echohl ErrorMsg<cr><cmd>echo "Can't do this without NeoVim"<cr><cmd>echohl None<cr>
+	nn <leader>gc <cmd>echohl ErrorMsg<cr><cmd>echo "Can't do this without NeoVim"<cr><cmd>echohl None<cr>
 endif
