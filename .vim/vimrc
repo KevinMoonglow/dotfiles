@@ -1,0 +1,360 @@
+" Vim startup config
+" Listing the filenames to other related configs here lets me quickly jump to
+" them with `gf`
+" Also See: [../.config/nvim/init.vim]
+
+" === Basic settings ===
+
+" Disable terrible Vi shenanigans
+set nocompatible
+" Don't be like Vi
+set backspace=indent,eol,start
+
+" fish shell confuses a lot of Vim plugins
+set shell=/bin/zsh
+let $SHELL="/bin/zsh"
+
+set history=50
+set ruler
+
+" Silly Vim needs to be told how to use a mouse.
+set mouse=a
+
+" Because 8 is just a bit ridiculous.
+set tabstop=4
+set shiftwidth=4
+
+" Just makes wrapping look nicer
+set linebreak
+
+" Show search matches as it's being typed
+set incsearch
+" Highlight all matches after search
+set hlsearch
+
+" Indicate wrapped lines with a helpful arrow and some indentation.
+set showbreak=<\ \ \ 
+
+" Nice visual display for tabs when `set list` is enabled.
+set listchars=tab:»\ 
+
+set encoding=utf8
+
+" The I flag removes the default Vim splash, for a cleaner looking startup.
+set shortmess+=I
+
+" Configure the gui the way I like it
+" a - Visual mode selections automatically take control of the X global
+"     selection buffer (and get put into the * yank buffer.
+" i - Use the Vim Icon for the program window.
+" c - Use console prompting instead of pop-ups
+set guioptions=aic
+
+" The Vim default is "egmrLT" (Windows) or "aegimrLtT" (Linux gVim)
+" In particular the following are not present in my setting
+" e - Gui tabs. Removing this setting makes the tabs appear in text mode.
+" g - Grey menu items - Irrelevant without gui menus.
+" m - Menu bar
+" r - Scroll bar
+" L - Scroll bar on the left (with splits)
+" t - Tearoff menus. Also irrelevant without menus.
+" T - Toolbar
+" 
+" Removing these values gets rid of a lot of GUI clutter.
+
+" Allow buffers to remain hidden in the background. Allows for quick buffer
+" switching.
+set hidden
+
+set cmdheight=1
+
+" Completion menu for commands
+set wildmenu
+set wildoptions=pum,tagfile
+
+set signcolumn=number
+
+" Partial command inputs are displayed on screen
+set showcmd
+
+filetype plugin indent on
+syntax on
+
+" Set where to put swap files.
+set directory=~/tmp/swap//,~/tmp//,.,/var/tmp//,/tmp//
+
+" Statusbar always visible
+set laststatus=2
+
+if !has("nvim")
+	" Font setting for gvim. Most NeoVim guis have their own config for
+	" this.
+	set guifont=Terminus\ Bold\ 16
+end
+" See: [../.config/nvim-qt/nvim-qt.conf] for nvim-qt font configs.
+
+
+" Set up my custom color scheme [colors/lunacy.vim]
+colors lunacy
+
+" This sets the global leader key to <space>. We're setting it here before any
+" plugins decide to start binding keys.
+
+" Sppaaaaaccceeee
+let g:mapleader = ' '
+
+" Relative line numbers are a bit distracting, but useful for editing. Maybe
+" I'll get used to them.
+set number
+set relativenumber
+set numberwidth=5
+
+" === Vim Plugins ===
+call plug#begin('~/.vim/plugged')
+
+" Syntax for fish scripts
+Plug 'khaveesh/vim-fish-syntax'
+Plug 'ryanoasis/vim-devicons'
+Plug 'preservim/nerdtree'
+" LSP Support
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" Colorize color codes
+Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
+" Nice which-key menu
+Plug 'liuchengxu/vim-which-key'
+" Fuzzy matching
+Plug 'junegunn/fzf.vim'
+Plug 'orlp/vim-bunlink'
+
+" NeoVim Silliness ====
+Plug 'nvim-lua/plenary.nvim'
+" Used by neogit
+Plug 'sindrets/diffview.nvim'
+" Useful git management
+Plug 'TimUntersberger/neogit'
+" =====================
+
+" Multiple cursors
+Plug 'mg979/vim-visual-multi'
+
+" Syntax for pegjs
+Plug 'alunny/pegjs-vim'
+
+
+" Zscript syntax
+Plug 'marrub--/vim-zscript'
+
+" Improved Javascript highlighting
+Plug 'pangloss/vim-javascript'
+" JSX Syntax
+Plug 'maxmellon/vim-jsx-pretty'
+
+" Typescript syntax
+Plug 'HerringtonDarkholme/yats'
+call plug#end()
+" ======== End of Plugin definitions =======
+" Don't forget to run `:PlugInstall`!
+
+" Recall the last cursor position on file load
+function Luna__recallPosition()
+	if line("'\"") > 0 && line("'\"") <= line("$")
+		exe "normal g`\""
+	endif
+endfunc
+autocmd BufReadPost * call Luna__recallPosition()
+
+" This sets up some custom highlight colors, mainly for the status bar and
+" other things that are likely to not be configured in most color scheme
+" files.
+function Luna__UserColors()
+		highlight StatusLine guifg=#dd65dd		guibg=white gui=reverse
+		highlight StatusLineNC guifg=Gray40		guibg=white  gui=reverse
+
+		hi User1 gui=none guifg=#dd65dd guibg=darkblue
+		hi User2 guifg=white guibg=darkblue
+		hi User3 gui=none guifg=#dd65dd guibg=#aa35aa
+		hi User4 gui=none guifg=white guibg=#aa35aa
+		hi User5 gui=none guifg=#aa35aa guibg=darkblue
+
+		highlight StatusLine ctermfg=170		ctermbg=white  cterm=reverse
+		highlight StatusLineNC ctermfg=241		ctermbg=white  cterm=reverse
+
+		hi User1 cterm=none ctermfg=170  ctermbg=17
+		hi User2 ctermfg=white ctermbg=17
+		hi User3 cterm=none ctermfg=170  ctermbg=127
+		hi User4 cterm=none ctermfg=white ctermbg=127
+		hi User5 cterm=none ctermfg=127 ctermbg=17
+
+		hi link WhichKey String
+		hi link WhichKeySeperator Comment
+		hi link WhichKeyGroup Keyword
+		hi link WhichKeyDesc Function
+		hi WhichKeyFloating guibg=navy ctermbg=17
+endfunction
+
+augroup Luna__statuscols
+	autocmd!
+	au ColorScheme,VimEnter * call Luna__UserColors()
+augroup END
+
+" Custom status bar
+set statusline=%<%f\ %h%m%r%1*%*%2*
+set statusline+=\ %{coc#status()}%{get(b:,'coc_current_function','')}
+set statusline+=%=%5*%4*%4P\ %3*%*%14.(%l,%c%V%)
+
+
+
+" Prep the leader key.
+let g:which_key_map = {}
+" Register the keymap with which-key
+call which_key#register('<Space>', g:which_key_map, 'n')
+
+" Map the leader key to the which-key tool.
+nnoremap <silent> <leader> :<c-u>WhichKey '<Space>'<CR>
+
+" Keybind that seems inconsistent between Vim and NVim normally.
+no Q gQ
+
+" Make Y behave consistantly with other motions like D and C
+no Y y$
+
+" Set how color codes are colorized.
+let g:Hexokinase_highlighters = [ 'backgroundfull' ]
+
+let g:fzf_preview_quit_map="<Esc>"
+
+
+function Luna__installCOCPlugins()
+	CocInstall coc-pyright
+	CocInstall coc-tsserver
+	CocInstall coc-fzf-preview
+endfunction
+
+" Autocompletion keybinds for CoC
+inoremap <silent><expr> <TAB>
+       \ coc#pum#visible() ? coc#pum#next(1):
+       \ CheckBackspace() ? "\<Tab>" :
+       \ coc#refresh()
+inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+
+function! CheckBackspace() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+inoremap <silent><expr> <c-space> coc#refresh()
+"
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+" Highlight the symbol and its references when holding the cursor.
+
+" Highlight a symbol when hoving over it
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+
+augroup Luna__cocSetupAugroup
+  autocmd!
+  " Setup formatexpr specified filetype(s).
+  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+  " Update signature help on jump placeholder.
+  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+augroup end
+
+
+" Jump between LSP messages
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" GoTo code navigation.
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+function! ShowDocumentation()
+  if CocAction('hasProvider', 'hover')
+    call CocActionAsync('doHover')
+  else
+    call feedkeys('K', 'in')
+  endif
+endfunction
+
+nnoremap <silent> K :call ShowDocumentation()<CR>
+
+
+
+
+" The find file keymap
+let g:which_key_map['.'] = "Find File"
+nn <leader>. <cmd>Files<cr>
+
+"Buffer control mappings
+let g:which_key_map.b = {'name': '+buffers'}
+let g:which_key_map.b.b = "Find Buffer"
+let g:which_key_map.b.N = "New Buffer"
+let g:which_key_map.b.d = "Kill Buffer"
+let g:which_key_map.b.k = "Kill Buffer"
+let g:which_key_map.b['['] = "Previous Buffer"
+let g:which_key_map.b[']'] = "Next Buffer"
+let g:which_key_map.b.n = "Previous Buffer"
+let g:which_key_map.b.p = "Next Buffer"
+let g:which_key_map.b.x = "Scratch Buffer (Split)"
+let g:which_key_map.b.X = "Scratch Buffer"
+
+nn <leader>bb <cmd>Buffers<cr>
+nn <leader>bN <cmd>enew<cr>
+nn <leader>bd <cmd>Bdelete<cr>
+nn <leader>bk <cmd>Bdelete<cr>
+nn <leader>b[ <cmd>bp<cr>
+nn <leader>b] <cmd>bn<cr>
+nn <leader>bn <cmd>bp<cr>
+nn <leader>bp <cmd>bn<cr>
+nn <leader>bX <cmd>TScratch!<cr>
+nn <leader>bx <cmd>TScratch<cr>
+
+" Tab control bindings
+let g:which_key_map['<Tab>'] = {'name': '+Tabs'}
+let g:which_key_map['<Tab>']['1'] = "Tab 1"
+let g:which_key_map['<Tab>']['2'] = "Tab 2"
+let g:which_key_map['<Tab>']['3'] = "Tab 3"
+let g:which_key_map['<Tab>']['4'] = "Tab 4"
+let g:which_key_map['<Tab>']['5'] = "Tab 5"
+let g:which_key_map['<Tab>']['6'] = "Tab 6"
+let g:which_key_map['<Tab>']['7'] = "Tab 7"
+let g:which_key_map['<Tab>']['8'] = "Tab 8"
+let g:which_key_map['<Tab>']['9'] = "Tab 9"
+let g:which_key_map['<Tab>']['0'] = "Last tab"
+let g:which_key_map['<Tab>'][']'] = "Next tab"
+let g:which_key_map['<Tab>']['['] = "Previous tab"
+let g:which_key_map['<Tab>']['`'] = "Recent tab"
+let g:which_key_map['<Tab>']['N'] = "New tab"
+let g:which_key_map['<Tab>']['d'] = "Close Tab"
+
+nn <leader><tab>1 1gt
+nn <leader><tab>2 2gt
+nn <leader><tab>3 3gt
+nn <leader><tab>4 4gt
+nn <leader><tab>5 5gt
+nn <leader><tab>6 6gt
+nn <leader><tab>7 7gt
+nn <leader><tab>8 8gt
+nn <leader><tab>9 9gt
+nn <leader><tab>0 <cmd>silent tabn $<CR>
+nn <leader><tab>] gt
+nn <leader><tab>[ gT
+nn <leader><tab>` g<tab>
+nn <leader><tab>N <cmd>tabnew<cr>
+nn <leader><tab>d <cmd>tabclose<cr>
+
+
+" Git magic
+let g:which_key_map.g = {'name': "+git"}
+let g:which_key_map.g.g = "Git Status"
+let g:which_key_map.g.c = "Git Commit"
+
+if has("nvim")
+	nn <leader>gg <cmd>Neogit<cr>
+	nn <leader>gc <cmd>Neogit commit<cr>
+else
+	nn <leader>gg <cmd>echo "Can't do this without NeoVim"
+	nn <leader>gc <cmd>echo "Can't do this without NeoVim"
+endif
