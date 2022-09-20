@@ -295,8 +295,8 @@ let g:which_key_map.b.d = "Kill Buffer"
 let g:which_key_map.b.k = "Kill Buffer"
 let g:which_key_map.b['['] = "Previous Buffer"
 let g:which_key_map.b[']'] = "Next Buffer"
-let g:which_key_map.b.n = "Previous Buffer"
-let g:which_key_map.b.p = "Next Buffer"
+let g:which_key_map.b.p = "Previous Buffer"
+let g:which_key_map.b.n = "Next Buffer"
 let g:which_key_map.b.x = "Scratch Buffer (Split)"
 let g:which_key_map.b.X = "Scratch Buffer"
 
@@ -306,8 +306,8 @@ nn <leader>bd <cmd>Bdelete<cr>
 nn <leader>bk <cmd>Bdelete<cr>
 nn <leader>b[ <cmd>bp<cr>
 nn <leader>b] <cmd>bn<cr>
-nn <leader>bn <cmd>bp<cr>
-nn <leader>bp <cmd>bn<cr>
+nn <leader>bp <cmd>bp<cr>
+nn <leader>bn <cmd>bn<cr>
 nn <leader>bX <cmd>TScratch!<cr>
 nn <leader>bx <cmd>TScratch<cr>
 
