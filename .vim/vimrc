@@ -203,9 +203,13 @@ set statusline+=\ %{coc#status()}%{get(b:,'coc_current_function','')}
 set statusline+=%=%5*%4*%4P\ %3*%*%14.(%l,%c%V%)
 
 
+" ============================================================================
+" ======== Keybindings =======================================================
+
+let g:which_key_fallback_to_native_key=0
 
 " Prep the leader key.
-let g:which_key_map = {}
+let g:which_key_map = {'name': "+leader"}
 " Register the keymap with which-key
 call which_key#register('<Space>', g:which_key_map, 'n')
 
@@ -312,7 +316,7 @@ nn <leader>bX <cmd>TScratch!<cr>
 nn <leader>bx <cmd>TScratch<cr>
 
 " Tab control bindings
-let g:which_key_map['<Tab>'] = {'name': '+Tabs'}
+let g:which_key_map['<Tab>'] = {'name': '+tabs'}
 let g:which_key_map['<Tab>']['1'] = "Tab 1"
 let g:which_key_map['<Tab>']['2'] = "Tab 2"
 let g:which_key_map['<Tab>']['3'] = "Tab 3"
@@ -358,3 +362,183 @@ else
 	nn <leader>gg <cmd>echohl ErrorMsg<cr><cmd>echo "Can't do this without NeoVim"<cr><cmd>echohl None<cr>
 	nn <leader>gc <cmd>echohl ErrorMsg<cr><cmd>echo "Can't do this without NeoVim"<cr><cmd>echohl None<cr>
 endif
+
+
+" This is my attempt to add which-key support to a native vim prefix like
+" <c-w>. It's a bit of a mess to configure, but works... mostly.
+let g:window_key_map = {'name': "+window"}
+call which_key#register('^W', g:window_key_map, 'n')
+no <c-w> <cmd>WhichKey '^W'<CR>
+
+" Duplicate these bindings on <leader>w
+let g:which_key_map.w = g:window_key_map
+
+" Making a Popup menu for all the CTRL-W functions. Sadly Which key can't
+" really handle this gracefully with the builtin bindings, so we have to remap
+" these to themselves using `:no` (`:noremap`)
+"
+" The problem with this approach is that keybinds that take a count (such as
+" <c-w>_ (set window height) won't recieve the count once the which-key popup
+" appears. So using these commands with a count requires completing the inputs
+" before the popup appears.
+"
+" Ultimately it might be better to just have some easy window controls on
+" <leader>w and leave <c-w> bindings to Vim's normal handling.
+no <c-W><c-B> <c-W><c-B>
+no <c-W><c-C> <c-W><c-C>
+no <c-W><c-D> <c-W><c-D>
+no <c-W><c-F> <c-W><c-F>
+no <c-W><c-G> <c-W><c-G>
+no <c-W><c-H> <c-W><c-H>
+no <c-W><c-I> <c-W><c-I>
+no <c-W><c-J> <c-W><c-J>
+no <c-W><c-K> <c-W><c-K>
+no <c-W><c-L> <c-W><c-L>
+no <c-W><c-N> <c-W><c-N>
+no <c-W><c-O> <c-W><c-O>
+no <c-W><c-P> <c-W><c-P>
+no <c-W><c-Q> <c-W><c-Q>
+no <c-W><c-R> <c-W><c-R>
+no <c-W><c-S> <c-W><c-S>
+no <c-W><c-T> <c-W><c-T>
+no <c-W><c-V> <c-W><c-V>
+no <c-W><c-W> <c-W><c-W>
+no <c-W><c-X> <c-W><c-X>
+no <c-W><c-Z> <c-W><c-Z>
+no <c-W><c-]> <c-W><c-]>
+no <c-W><c-^> <c-W><c-^>
+no <c-W><c-_> <c-W><c-_>
+no <c-W>+ <c-W>+
+no <c-W>- <c-W>-
+no <c-W>< <c-W><
+no <c-W>= <c-W>=
+no <c-W>> <c-W>>
+no <c-W>H <c-W>H
+no <c-W>J <c-W>J
+no <c-W>K <c-W>K
+no <c-W>L <c-W>L
+no <c-W>P <c-W>P
+no <c-W>R <c-W>R
+no <c-W>S <c-W>S
+no <c-W>T <c-W>T
+no <c-W>W <c-W>W
+no <c-W>] <c-W>]
+no <c-W>^ <c-W>^
+no <c-W>_ <c-W>_
+no <c-W>b <c-W>b
+no <c-W>c <c-W>c
+no <c-W>d <c-W>d
+no <c-W>f <c-W>f
+no <c-W>F <c-W>F
+no <c-W>g<c-]> <c-W>g<c-]>
+no <c-W>g] <c-W>g]
+no <c-W>g} <c-W>g}
+no <c-W>gf <c-W>gf
+no <c-W>gF <c-W>gF
+no <c-W>gt <c-W>gt
+no <c-W>gT <c-W>gT
+no <c-W>g<Tab> <c-W>g<Tab>
+no <c-W>h <c-W>h
+no <c-W>i <c-W>i
+no <c-W>j <c-W>j
+no <c-W>k <c-W>k
+no <c-W>l <c-W>l
+no <c-W>n <c-W>n
+no <c-W>o <c-W>o
+no <c-W>p <c-W>p
+no <c-W>q <c-W>q
+no <c-W>r <c-W>r
+no <c-W>s <c-W>s
+no <c-W>t <c-W>t
+no <c-W>v <c-W>v
+no <c-W>w <c-W>w
+no <c-W>x <c-W>x
+no <c-W>z <c-W>z
+no <c-W>\| <c-W>\|
+no <c-W>} <c-W>}
+no <c-W><Down> <c-W><Down>
+no <c-W><Up> <c-W><Up>
+no <c-W><Left> <c-W><Left>
+no <c-W><Right> <c-W><Right>
+
+" Awkwardly this setup requires defining the binding both with the vim mapping
+" and manually in the key map.
+let g:window_key_map['<c-B>'] = ['\<c-w><c-B>', "which_key_ignore"]
+let g:window_key_map['<c-C>'] = ['\<c-w><c-C>', "which_key_ignore"]
+let g:window_key_map['<c-D>'] = ['\<c-w><c-D>', "which_key_ignore"]
+let g:window_key_map['<c-F>'] = ['\<c-w><c-F>', "which_key_ignore"]
+let g:window_key_map['<c-G>'] = ['\<c-w><c-G>', "which_key_ignore"]
+let g:window_key_map['<c-H>'] = ['\<c-w><c-H>', "which_key_ignore"]
+let g:window_key_map['<c-I>'] = ['\<c-w><c-I>', "which_key_ignore"]
+let g:window_key_map['<c-J>'] = ['\<c-w><c-J>', "which_key_ignore"]
+let g:window_key_map['<c-K>'] = ['\<c-w><c-K>', "which_key_ignore"]
+let g:window_key_map['<c-L>'] = ['\<c-w><c-L>', "which_key_ignore"]
+let g:window_key_map['<c-N>'] = ['\<c-w><c-N>', "which_key_ignore"]
+let g:window_key_map['<c-O>'] = ['\<c-w><c-O>', "which_key_ignore"]
+let g:window_key_map['<c-P>'] = ['\<c-w><c-P>', "which_key_ignore"]
+let g:window_key_map['<c-Q>'] = ['\<c-w><c-Q>', "which_key_ignore"]
+let g:window_key_map['<c-R>'] = ['\<c-w><c-R>', "which_key_ignore"]
+let g:window_key_map['<c-S>'] = ['\<c-w><c-S>', "which_key_ignore"]
+let g:window_key_map['<c-T>'] = ['\<c-w><c-T>', "which_key_ignore"]
+let g:window_key_map['<c-V>'] = ['\<c-w><c-V>', "which_key_ignore"]
+let g:window_key_map['<c-W>'] = ['\<c-w><c-W>', "which_key_ignore"]
+let g:window_key_map['<c-X>'] = ['\<c-w><c-X>', "which_key_ignore"]
+let g:window_key_map['<c-Z>'] = ['\<c-w><c-Z>', "which_key_ignore"]
+let g:window_key_map['<c-]>'] = ['\<c-w><c-]>', "which_key_ignore"]
+let g:window_key_map['<c-^>'] = ['\<c-w><c-^>', "which_key_ignore"]
+let g:window_key_map['<c-_>'] = ['\<c-w><c-_>', "which_key_ignore"]
+let g:window_key_map['+'] = ['\<c-w>+', "Window height +"]
+let g:window_key_map['-'] = ['\<c-w>-', "Window height -"]
+let g:window_key_map['<'] = ['\<c-w><', "Window width -"]
+let g:window_key_map['='] = ['\<c-w>=', "Balance windows"]
+let g:window_key_map['>'] = ['\<c-w>>', "Window width +"]
+let g:window_key_map.H = ['\<c-w>H', "Move  "]
+let g:window_key_map.J = ['\<c-w>J', "Move  "]
+let g:window_key_map.K = ['\<c-w>K', "Move  "]
+let g:window_key_map.L = ['\<c-w>L', "Move  "]
+let g:window_key_map.P = ['\<c-w>P', "Goto Preview"]
+let g:window_key_map.R = ['\<c-w>R', "Rotate Up"]
+let g:window_key_map.S = ['\<c-w>S', "which_key_ignore"]
+let g:window_key_map.T = ['\<c-w>T', "To new tab"]
+let g:window_key_map.W = ['\<c-w>W', "To previous"]
+let g:window_key_map[']'] = ['\<c-w>]', "Split to Tag"]
+let g:window_key_map['^'] = ['\<c-w>^', "Split to Alt File"]
+let g:window_key_map._ = ['\<c-w>_', "Set height"]
+let g:window_key_map.b = ['\<c-w>b', "To bottom"]
+let g:window_key_map.c = ['\<c-w>c', "Close Window"]
+let g:window_key_map.d = ['\<c-w>d', "Split to definition"]
+let g:window_key_map.f = ['\<c-w>f', "Split to file"]
+let g:window_key_map.F = ['\<c-w>F', "Split to file and line"]
+
+let g:window_key_map.g = {'name': "+tags/tabs"}
+let g:window_key_map.g['<c-]>'] = ['\<c-w>g\<c-]>', "Split tag"]
+let g:window_key_map.g[']'] = ['\<c-w>g]', "Split tag select"]
+let g:window_key_map.g['}'] = ['\<c-w>g}', "Preview tag"]
+let g:window_key_map.g.f = ['\<c-w>gf', "File in new tab"]
+let g:window_key_map.g.F = ['\<c-w>gF', "File in new tab and line"]
+let g:window_key_map.g.t = ['\<c-w>gt', "Next Tab"]
+let g:window_key_map.g.T = ['\<c-w>gT', "Previous Tab"]
+let g:window_key_map.g['<Tab>'] = ['\<c-w>g\<tab>', "Recent Tab"]
+let g:window_key_map.h = ['\<c-w>h', "Left"]
+let g:window_key_map.i = ['\<c-w>i', "Split to identifier"]
+let g:window_key_map.j = ['\<c-w>j', "Down"]
+let g:window_key_map.k = ['\<c-w>k', "Up"]
+let g:window_key_map.l = ['\<c-w>l', "Right"]
+let g:window_key_map.n = ['\<c-w>n', "New"]
+let g:window_key_map.o = ['\<c-w>o', "Only"]
+let g:window_key_map.p = ['\<c-w>p', "Previous"]
+let g:window_key_map.q = ['\<c-w>q', "Quit"]
+let g:window_key_map.r = ['\<c-w>r', "Rotate"]
+let g:window_key_map.s = ["\<c-w>s", "  Split"]
+let g:window_key_map.t = ['\<c-w>t', "Top"]
+let g:window_key_map.v = ["\<c-w>v", "  Split"]
+let g:window_key_map.w = ['\<c-w>w', "Next"]
+let g:window_key_map.x = ['\<c-w>x', "Exchange"]
+let g:window_key_map.z = ['\<c-w>z', "Close Preview"]
+let g:window_key_map['|'] = ['\<c-w>|', "Set Width"]
+let g:window_key_map['}'] = ['\<c-w>}', "Preview Tag"]
+let g:window_key_map['<Down>'] = ['\<c-w>\<Down>', " "]
+let g:window_key_map['<Up>'] = ['\<c-w>\<Up>', " "]
+let g:window_key_map['<Left>'] = ['\<c-w>\<Left>', " "]
+let g:window_key_map['<Right>'] = ['\<c-w>\<Right>', " "]
+
