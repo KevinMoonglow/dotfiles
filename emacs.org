@@ -20,6 +20,8 @@ Here we set a few basic settings.
   (tool-bar-mode -1)
   (set-fringe-mode 10)
   (menu-bar-mode -1)
+  (set-default 'tab-width 4)
+  (set-default 'require-final-newline t)
 #+end_src
 
 ** Configure the package management

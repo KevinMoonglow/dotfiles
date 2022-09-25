@@ -26,6 +26,8 @@
 		    :weight 'regular
 		    :height 160)
 
+(set-default 'tab-width 4)
+(set-default 'require-final-newline t)
 
 (require 'package)
 
