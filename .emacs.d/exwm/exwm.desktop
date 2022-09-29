@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=EXWM
+Comment=Emacs Windows Manager
+Exec=lxsession -s exwm -e EXWM
+TryExec=lxsession
+Type=Application
+X-LightDM-DesktopName=exwm
+DesktopNames=exwm

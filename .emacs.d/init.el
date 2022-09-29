@@ -8,6 +8,10 @@
 (menu-bar-mode -1)
 (set-default 'tab-width 4)
 (set-default 'require-final-newline t)
+(set-default 'wrap-prefix (propertize ">   " 'face 'font-lock-comment-face))
+(setq inhibit-compacting-font-caches t)
+(defface quote '() "Defined to avoid log spam?")
+(save-place-mode 1)
 
 (require 'package)
 
@@ -39,6 +43,80 @@
 ; Register the hook for org mode
 (add-hook 'org-mode-hook #'luna/config-tangle-register)
 
+(defun luna/exwm-hook ()
+  (start-process-shell-command "xkbmap1" nil "setxkbmap -option compose:ralt")
+  (start-process-shell-command "xkbmap2" nil "setxkbmap -option caps:ctrl_modifier")
+  ;(start-process-shell-command "xkbmap2" nil "setxkbmap -option caps:escape_shifted_capslock")
+
+  (set-frame-parameter (selected-frame) 'fullscreen 'maximized)
+  (add-to-list 'default-frame-alist '(fullscreen . maximized))
+)
+
+(defun luna/exwm-rename-buffer-hook ()
+  (exwm-workspace-rename-buffer exwm-class-name)
+)
+(defun luna/exwm-screen-hook ()
+  (start-process-shell-command "xrandr" nil "xrandr --output HDMI-0 --rotate left --mode 1920x1080 --rate 144 --output DP-0 --primary --pos 0x480 -s 3640x1440")
+  (start-process-shell-command "feh" nil "~/.fehbg")
+)
+(defun luna/exwm ()  
+    (require 'exwm)
+    (setq exwm-workspace-number 6)
+
+    (add-hook 'exwm-update-class-hook #'luna/exwm-rename-buffer-hook)
+
+    (setq exwm-input-global-keys
+          `(
+            ([?\s-q] . exwm-reset)
+            ([?\s-w] . exwm-workspace-switch)
+            ([?\s-j] . windmove-down)
+            ([?\s-k] . windmove-up)
+            ([?\s-h] . windmove-left)
+            ([?\s-l] . windmove-right)
+            ([?\s-J] . windmove-swap-states-down)
+            ([?\s-K] . windmove-swap-states-up)
+            ([?\s-H] . windmove-swap-states-left)
+            ([?\s-L] . windmove-swap-states-right)
+            ([?\s-F] . exwm-floating-toggle-floating)
+            ([?\s-\C-j] . evil-window-decrease-width)
+            ([?\s-\C-K] . evil-window-increase-height)
+            ([?\s-\C-h] . evil-window-decrease-height)
+            ([?\s-\C-l] . evil-window-increase-width)
+            ([?\s-w] . kill-buffer)
+            ([?\s-c] . exwm-input-grab-keyboard)
+            ([?\s-r] . counsel-linux-app)
+            ([?\s-R] . (lambda (command)
+                         (interactive (list (read-shell-command "$ ")))
+                         (start-process-shell-command command nil command)))
+            ,@(mapcar (lambda (i)
+                        `(,(kbd (format "s-%d" i)) .
+                          (lambda ()
+                            (interactive)
+                            (exwm-workspace-switch-create ,(- i 1)))))
+                      (number-sequence 1 9))))
+    (define-key exwm-mode-map (kbd "s-z") 'exwm-input-send-next-key)
+    (setq exwm-input-prefix-keys
+      '(?\C-x
+        ?\M-x
+        ?\M-`
+        ?\C-h
+        ?\M-\ )
+    )
+
+    (require 'exwm-randr)
+    (setq exwm-randr-workspace-monitor-plist '(5 "HDMI-0"))
+
+    (add-hook 'exwm-randr-screen-change-hook #'luna/exwm-screen-hook)
+    (exwm-randr-enable)
+
+    (require 'exwm-systemtray)
+    (exwm-systemtray-enable)
+
+    (add-hook 'exwm-init-hook #'luna/exwm-hook)
+
+    (exwm-enable)
+  )
+
 (setq custom-theme-directory "~/.emacs.d/themes")
 (load-theme 'Lunacy t)
 
@@ -57,58 +135,44 @@
                     :weight 'regular
                     :height 160)
 
+(set-fontset-font t nil (font-spec :family "Symbols Nerd Font Mono") nil 'prepend)
+(use-package all-the-icons)
+
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
 
 (use-package diminish)
 
-(defun luna/exwm-hook ()
-  (exwm-config-ido)
-  (exwm-config-misc)
-  (start-process-shell-command "xkbmap1" nil "setxkbmap -option compose:ralt")
-  (start-process-shell-command "xkbmap2" nil "setxkbmap -option caps:ctrl_modifier")
-  ;(start-process-shell-command "xkbmap2" nil "setxkbmap -option caps:escape_shifted_capslock")
-)
+(deftheme luna/modeline "Luna's modeline")
+  (custom-theme-set-variables 'luna/modeline '(mode-line-format '(
+    ;(mode-line-frame-identification mode-line-buffer-identification)
+    (:propertize "%b " face 'mode-line-buffer-id)
+    (:propertize ("" (:eval (if (buffer-modified-p) "[+]" ""))) face 'mode-line-buffer-id)
+    (:propertize "" face '(:foreground "#dd65dd"))
+    (:propertize mode-line-misc-info)
+    " "
+    (:propertize exwm-title)
+    (:eval (propertize " " 'display `(space :align-to (- right 20))))
+    (:propertize "" face '(:foreground "#aa35aa"))
+    (:propertize "%6p " face '(:foreground "#ffffff" :background "#aa35aa"))
+    (:propertize "" face '(:foreground "#dd64dd" :background "#aa35aa"))
+    (:propertize "%6l,%3C " face 'mode-line-buffer-id)
+  )))
+  (enable-theme 'luna/modeline)
+;;   (use-package doom-modeline)
+;;   (setq doom-modeline-icon t)
+;;   (setq doom-modeline-height 8)
+;;   (setq doom-modeline-hud nil)
+;;   (doom-modeline-def-modeline 'luna/doom-modeline
+;;    '(buffer-info)
+;;    '()
+;;   )
+;;   (defun luna/mk-modeline ()
+;;      (doom-modeline-set-modeline 'luna/doom-modeline 'default))
+;; (add-hook 'doom-modeline-mode-hook #'luna/mk-modeline) ;
 
-(defun luna/exwm ()  
-  (require 'exwm)
-  (setq exwm-workspace-number 6)
-
-  (add-hook 'exwm-update-class-hook
-            (lambda ()
-              (exwm-worksapce-rename-buffer exwm-class-name)))
-
-  (setq exwm-input-global-keys
-        `(
-          ([?\s-R] . exwm-reset)
-          ([?\s-w] . exwm-workspace-switch)
-          ([?\s-r] . (lambda (command)
-                       (interactive (list (read-shell-command "$ ")))
-                       (start-process-shell-command command nil command)))
-          ,@(mapcar (lambda (i)
-                      `(,(kbd (format "s-%d" i)) .
-                        (lambda ()
-                          (interactive)
-                          (exwm-workspace-switch-create ,(- i 1)))))
-                    (number-sequence 1 9))))
-  (define-key exwm-mode-map (kbd "s-z") 'exwm-input-send-next-key)
-
-  (require 'exwm-randr)
-  (setq exwm-randr-workspace-monitor-plist '(5 "HDMI-0"))
-
-;(add-hook 'exwm-randr-screen-change-hook
-;          (lambda ()
-;            (start-process-shell-command
-;             "xrandr" nil "xrandr --output DP-1 --right-of DP-2 --auto")))
-  (exwm-randr-enable)
-
-  (require 'exwm-systemtray)
-  (exwm-systemtray-enable)
-
-  (add-hook 'exwm-init-hook #'luna/exwm-hook)
-
-  (exwm-enable)
-)
+(set-frame-parameter (selected-frame) 'alpha-background 90)
+(add-to-list 'default-frame-alist '(alpha-background . 90))
 
 (defun luna/org-mode-hook ()
   (org-indent-mode)
@@ -127,9 +191,10 @@
                   (org-level-8 . 1.05)))
     (set-face-attribute (car face) nil :font "Cantarell" :weight 'regular :height (cdr face)))
   (face-remap-add-relative 'default 'org-default)
+  (set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))
 )
 (defun luna/org-visual-fill ()
-  (setq visual-fill-column-width 100
+  (setq visual-fill-column-width 120
         visual-fill-column-center-text t)
   (visual-fill-column-mode 1)
 )
@@ -142,7 +207,6 @@
   (set-face-attribute 'org-block-begin-line nil :weight 'bold :inherit '(fixed-pitch))
   (set-face-attribute 'org-code nil :weight 'bold :inherit '(shadow fixed-pitch))
   (set-face-attribute 'org-table nil :weight 'bold :inherit '(shadow fixed-pitch))
-  ;(set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))
   (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
   (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
   (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment fixed-pitch))
@@ -227,60 +291,166 @@
   :config
   (evil-collection-init)
 )
+(defun luna/evil-mc-down ()
+  "Make downward cursor"
+  (interactive)
+  (evil-mc-pause-cursors)
+  (evil-mc-make-cursor-here)
+  (evil-next-line)
+  (evil-mc-resume-cursors)
+)
+(defun luna/evil-mc-up ()
+  "Make downward cursor"
+  (interactive)
+  (evil-mc-pause-cursors)
+  (evil-mc-make-cursor-here)
+  (evil-previous-line)
+  (evil-mc-resume-cursors)
+)
+
+
+(use-package evil-mc
+  :after (evil general)
+  :custom-face
+  (evil-mc-cursor-default-face ((t (:background "#ff0000"))))
+  :config
+  (setq evil-mc-enable-bar-cursor t)
+  (setq evil-mc-undo-cursors-on-keyboard-quit t)
+  (global-evil-mc-mode 1)
+  (general-define-key
+    :states '(normal visual)
+    :keymaps 'evil-mc-key-map
+    "C-<down>" 'luna/evil-mc-down
+    "C-<up>" 'luna/evil-mc-down
+    )
+  (general-define-key
+   :states 'normal
+   :keymaps 'evil-mc-map
+   "ESC" 'evil-mc-undo-all-cursors
+  )
+
+ ;; (evil-define-key '(normal visual) 'global
+ ;;   "gzm" #'evil-mc-make-all-cursors
+ ;;   "gzu" #'evil-mc-undo-all-cursors
+ ;;   "gzz" #'evil-mc-toggle-cursors
+ ;;   "gzc" #'evil-mc-make-cursor-here
+ ;;   "gzn" #'evil-mc-make-and-goto-next-cursor
+ ;;   "gzp" #'evil-mc-make-and-goto-prev-cursor
+ ;;   "gzN" #'evil-mc-make-and-goto-last-cursor
+ ;;   "gzP" #'evil-mc-make-and-goto-first-cursor)
+ ;;  (with-eval-after-load 'evil-mc
+ ;;    (evil-define-key '(normal visual) evil-mc-key-map
+ ;;      (kbd "C-n") #'evil-mc-make-and-goto-next-cursor
+ ;;      (kbd "C-N") #'evil-mc-make-and-goto-last-cursor
+ ;;      (kbd "C-p") #'evil-mc-make-and-goto-prev-cursor
+ ;;      (kbd "C-P") #'evil-mc-make-and-goto-first-cursor
+ ;;      (kbd "C-<down>") #'evil-mc-make-and-goto-next-cursor
+ ;;      (kbd "C-<up>") #'evil-mc-make-and-goto-prev-cursor
+ ;;      ))								;
+)
+;;(use-package evil-multiedit
+;;  :after (evil evil-mc)
+;;  :config
+;;  (evil-define-key 'normal 'global
+;;    (kbd "M-d")   #'evil-multiedit-match-symbol-and-next
+;;    (kbd "M-D")   #'evil-multiedit-match-symbol-and-prev)
+;;  (evil-define-key 'visual 'global
+;;    "R"           #'evil-multiedit-match-all
+;;    (kbd "M-d")   #'evil-multiedit-match-and-next
+;;    (kbd "M-D")   #'evil-multiedit-match-and-prev)
+;;  (evil-define-key '(visual normal) 'global
+;;    (kbd "C-M-d") #'evil-multiedit-restore)
+
+;;  (with-eval-after-load 'evil-multiedit
+;;    (evil-define-key 'multiedit 'global
+;;      (kbd "M-d")   #'evil-multiedit-match-and-next
+;;      (kbd "M-S-d") #'evil-multiedit-match-and-prev
+;;      (kbd "RET")   #'evil-multiedit-toggle-or-restrict-region)
+;;    (evil-define-key '(multiedit multiedit-insert) 'global
+;;      (kbd "C-n")   #'evil-multiedit-next
+;;      (kbd "C-p")   #'evil-multiedit-prev))
+
+;;)
 
 (use-package general
   :after evil
   :config
   (general-evil-setup t)
 
+  (setq luna/leader-map (make-sparse-keymap))
   (general-create-definer luna/leader-keys
     :keymaps '(normal insert visual emacs)
     :prefix "SPC"
-    :global-prefix "C-SPC"
-  )
+    :global-prefix "M-SPC"
+    :prefix-map 'luna/leader-map
+    )
   (global-set-key (kbd "<escape>") 'keyboard-quit)
 
+
+
   (luna/leader-keys
-    "." '(find-file :which-key ".")
-    ":" '(counsel-M-x :which-key "M-x")
-    ";" '(eval-expression :which-key "Eval Expression")
-    "/" '(swiper :which-key "Swiper Search")
-    "]" '(next-buffer :which-key "Next Buffer")
-    "[" '(previous-buffer :which-key "Previous Buffer")
-    "h" '(:keymap help-map :which-key "help")
-    ;"h" '(:ignore t :which-key "help")
-    ;"h f" '(describe-function :which-key "Describe Function")
-    ;"h k" '(describe-key :which-key "Describe Key")
-    ;"h v" '(describe-variable :which-key "Describe Variable")
+       "." '(find-file :which-key ".")
+       ":" '(counsel-M-x :which-key "M-x")
+       ";" '(eval-expression :which-key "Eval Expression")
+       "/" '(swiper :which-key "Swiper Search")
+       "]" '(next-buffer :which-key "Next Buffer")
+       "[" '(previous-buffer :which-key "Previous Buffer")
+       "h" '(:keymap help-map :which-key "help")
+       ;"h" '(:ignore t :which-key "help")
+       ;"h f" '(describe-function :which-key "Describe Function")
+       ;"h k" '(describe-key :which-key "Describe Key")
+       ;"h v" '(describe-variable :which-key "Describe Variable")
 
-    "b" '(:ignore t :which-key "buffers")
-    "b b" '(counsel-switch-buffer :which-key "Switch Buffer")
-    "b ]" '(next-buffer :which-key "Next Buffer")
-    "b [" '(previous-buffer :which-key "Previous Buffer")
-    "b n" '(next-buffer :which-key "Next Buffer")
-    "b p" '(previous-buffer :which-key "Previous Buffer")
-    "b N" '(evil-buffer-new :which-key "New Buffer")
-    "b d" '(kill-current-buffer :which-key "Kill Buffer")
-    "b k" '(kill-current-buffer :which-key "Kill Buffer")
-    "p" '(:keymap projectile-command-map :package projectile :which-key "projectile")
-    "p s" '(:ignore t :which-key "search")
-    "p x" '(:ignore t :which-key "shell")
+       "b" '(:ignore t :which-key "buffers")
+       "b b" '(counsel-switch-buffer :which-key "Switch Buffer")
+       "b ]" '(next-buffer :which-key "Next Buffer")
+       "b [" '(previous-buffer :which-key "Previous Buffer")
+       "b n" '(next-buffer :which-key "Next Buffer")
+       "b p" '(previous-buffer :which-key "Previous Buffer")
+       "b N" '(evil-buffer-new :which-key "New Buffer")
+       "b d" '(kill-current-buffer :which-key "Kill Buffer")
+       "b k" '(kill-current-buffer :which-key "Kill Buffer")
+       "p" '(projectile-command-map :which-key "projectile")
+       "p s" '(:ignore t :which-key "search")
+       "p x" '(:ignore t :which-key "shell")
 
-    "g" '(:ignore t :which-key "git")
-    "g g" '(magit-status :which-key "Status")
-    "-" '(dired :which-key "DirEd")
-    "=" '(treemacs-select-window :package treemacs :which-key "treemacs")
+       "g" '(:ignore t :which-key "git")
+       "g g" '(magit-status :which-key "Status")
+       "-" '(dired :which-key "DirEd")
+       "=" '(treemacs-select-window :package treemacs :which-key "treemacs")
 
-    "l" '(:keymaps lsp-mode-map :keymap lsp-command-map :package lsp-mode :which-key "lsp")
+       "l" '(:keymaps lsp-mode-map :keymap lsp-command-map :package lsp-mode :which-key "lsp")
+
+       "w" '(:keymap evil-window-map :which-key "window")
+
+       "i" '(exwm-input-release-keyboard :keymaps exwm-mode-map :which-key "grab")
+
+       "x"     '(:ignore t :which-key "exwm")
+       "x d"   '(:ignore t :which-key "debug")
+       "x t"   '(:ignore t :which-key "toggle")
+       "x d l" '(xcb-debug:clear :wk "debug:clear")
+       "x d m" '(xcb-debug:mark :wk "debug:mark")
+       "x d t" '(exwm-debug :wk "debug")
+       "x f"   '(exwm-layout-set-fullscreen :wk "fullscreen")
+       "x h"   '(exwm-floating-hide :wk "hide floating")
+       "x k"   '(exwm-input-release-keyboard :wk "grab")
+       "x m"   '(exwm-workspace-move-window :wk "move to workspace")
+       "x q"   '(exwm-input-send-next-key :wk "send next key")
+       "x t f" '(exwm-floating-toggle-floating :wk "float")
+       "x t m" '(exwm-layout-toggle-mode-line :wk "modeline")
   )
 
   ;; Or :keymaps 'map-name
   ;(general-imap org-mode-map "TAB" #'indent-for-tab-command)
   ;(general-nmap org-mode-map "TAB" 'org-cycle)
   (general-imap "C-g" 'evil-normal-state)
-  (general-def company-active-map "<tab>" 'company-complete-selection :package 'company)
+  (general-def company-active-map "<tab>" 'company-complete-selection)
   (general-imap lsp-mode-map "<tab>" 'company-indent-or-complete-common)
   ;(general-imap term-mode-map "C-d" 'term-delchar-or-maybe-eof)
+  (general-def exwm-mode-map "M-SPC" 'luna/leader-map)
+
+  (general-def ivy-minibuffer-map "C-j" 'ivy-next-line)
+  (general-def ivy-minibuffer-map "C-k" 'ivy-previous-line)
 )
 
 (use-package hydra)
@@ -316,6 +486,12 @@
 (defun luna/lsp-setup ()
   (setq lsp-headerline-breadcrumb-segments '(file symbols))
   (lsp-headerline-breadcrumb-mode)
+  (setq lsp-diagnostics-attributes '((unnecessary :foreground "#00ffff")
+                                     (deprecated :strike-through t)))
+)
+(defun luna/flycheck-setup ()
+)
+(defun luna/lsp-ui-setup ()
 )
 
 (use-package lsp-mode
@@ -328,6 +504,7 @@
 
 (use-package lsp-ui
   :commands lsp-ui-mode
+  :hook (lsp-ui-mode . luna/lsp-ui-setup)
   :custom
   (lsp-ui-doc-show-with-cursor t)
   (lsp-ui-doc-delay 2)
@@ -335,7 +512,10 @@
   (lsp-ui-sideline-show-hover t)
 )
 (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
-(use-package flycheck :commands flycheck-mode)
+(use-package flycheck
+   :commands flycheck-mode
+   :hook (flycheck-mode . luna/flycheck-setup)
+)
 (use-package lsp-treemacs
   :after (lsp treemacs))
 (use-package lsp-ivy
@@ -355,4 +535,67 @@
 (use-package typescript-mode
   :mode "\\.ts\\'"
   :hook (typescript-mode . lsp-deferred)
+)
+
+(use-package term
+  :config
+  (setq explicit-shell-file-name "fish")
+  (setq term-prompt-regexp "^.* +")
+)
+
+(use-package eterm-256color
+  :hook (term-mode . eterm-256color-mode))
+
+(use-package vterm
+  :commands vterm
+  :config
+  (setq vterm-max-scrollback 10000)
+)
+
+(defun luna/setup-eshell ()
+  (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
+  (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
+
+  (general-def '(normal insert visual) :keymaps eshell-mode-map
+     "C-r" 'counsel-esh-history
+     "<home>" 'eshell-bol)
+  (evil-normalize-keymaps)
+
+  (setq eshell-history-size 10000
+        eshell-buffer-maximum-lines 10000
+        eshell-hist-ignoredups t
+        eshell-scroll-to-bottom-on-input t)
+)
+
+(use-package eshell-git-prompt
+  :after eshell)
+
+(use-package eshell
+  :hook (eshell-first-time-mode . luna/setup-eshell)
+  :config
+  (eshell-git-prompt-use-theme 'powerline)
+  (with-eval-after-load 'esh-opt
+    (add-to-list 'eshell-visual-commands "vim"))
+)
+
+(use-package dired
+   :ensure nil
+   :commands (dired dired-jump)
+   :custom ((dired-listing-switches "-alhv --group-directories-first"))
+ )
+
+ (use-package dired-single
+   :after dired)
+
+ (use-package all-the-icons-dired
+   :hook (dired-mode . all-the-icons-dired-mode))
+
+ (use-package dired-hide-dotfiles
+   :config
+   (evil-collection-define-key 'normal 'dired-mode-map
+     "H" 'dired-hide-dotfiles-mode)
+ )
+ (use-package diredfl
+   :config
+   (diredfl-global-mode)
 )
