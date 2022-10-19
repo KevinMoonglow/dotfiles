@@ -81,7 +81,9 @@ filetype plugin indent on
 syntax on
 
 " Set where to put swap files.
-set directory=~/tmp/swap//,~/tmp//,.,/var/tmp//,/tmp//
+set directory=~/.cache/vim/swap,~/.local/share/nvim/swap,/var/tmp//,/tmp//,.
+set backupdir=~/.cache/vim/backup,~/.local/share/nvim/backup,.
+
 
 " Statusbar always visible
 set laststatus=2

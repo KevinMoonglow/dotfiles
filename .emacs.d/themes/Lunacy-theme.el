@@ -65,6 +65,9 @@
  '(org-hide ((t (:foreground "Gray10"))))
  '(org-indent ((t (:inherit (org-hide)))))
  '(org-ellipsis ((t (:foreground "DeepSkyBlue1" :height 0.6))))
- '(default ((t (:inherit nil :extend nil :stipple nil :background "#000000" :foreground "light gray" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight bold :height 162 :width normal :foundry "Xos4" :family "Terminus")))))
+ '(typescript-jsdoc-value ((t (:foreground "#ffff00"))))
+ '(typescript-jsdoc-tag ((t (:foreground "#00ffff"))))
+ '(default ((t (:inherit nil :extend nil :stipple nil :background "#000000" :foreground "light gray" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight bold :height 162 :width normal :foundry "Xos4" :family "Terminus"))))
+ '(company-tooltip-selection ((t (:inherit company-tooltip-selection :extend t :background "medium blue")))))
 
 (provide-theme 'Lunacy)

@@ -12,6 +12,15 @@
 (setq inhibit-compacting-font-caches t)
 (defface quote '() "Defined to avoid log spam?")
 (save-place-mode 1)
+(setq comment-multi-line t)
+(setq backup-directory-alist `(
+ ("." . ,(expand-file-name "~/.cache/emacs/backup"))
+))
+(setq lock-file-name-transforms '(("\\`/.*/\\([^/]+\\)\\'" "/var/tmp/\\1" t)))
+(setq auto-save-file-name-transforms `(("\\`/.*/\\([^/]]+\\)\\'" ,(expand-file-name "~/.cache/emacs/autosave/\\1"))))
+(setq lsp-ui-sideline-update-mode "line")
+(setq gc-cons-threshold 100000000)
+(setq read-process-output-max (* 1024 1024)) ;; 1mb
 
 (require 'package)
 
@@ -283,8 +292,10 @@
   (setq evil-want-C-u-delete t)
   (setq evil-want-Y-yank-to-eol t)
   (setq evil-want-C-w-in-emacs-state t)
+  :custom
+  (evil-undo-system 'undo-tree)
   :config
-(evil-mode 1)
+  (evil-mode 1)
 )
 (use-package evil-collection
   :after evil
@@ -372,6 +383,13 @@
 
 ;;)
 
+(use-package undo-tree
+  :custom
+  (undo-tree-auto-save-history nil)
+  :config
+  (global-undo-tree-mode 1)
+)
+
 (use-package general
   :after evil
   :config
@@ -419,7 +437,6 @@
        "-" '(dired :which-key "DirEd")
        "=" '(treemacs-select-window :package treemacs :which-key "treemacs")
 
-       "l" '(:keymaps lsp-mode-map :keymap lsp-command-map :package lsp-mode :which-key "lsp")
 
        "w" '(:keymap evil-window-map :which-key "window")
 
@@ -438,6 +455,16 @@
        "x q"   '(exwm-input-send-next-key :wk "send next key")
        "x t f" '(exwm-floating-toggle-floating :wk "float")
        "x t m" '(exwm-layout-toggle-mode-line :wk "modeline")
+
+       "l" '(:ignore t :wk "lsp")
+       "l g" '(:ignore t :wk "go")
+       "l G" '(:ignore t :wk "go-peek")
+       "l =" '(:ignore t :wk "format")
+       "l F" '(:ignore t :wk "folders")
+       "l T" '(:ignore t :wk "toggles")
+       "l h" '(:ignore t :wk "help")
+       "l r" '(:ignore t :wk "refactor")
+       "l w" '(:ignore t :wk "workspace")
   )
 
   ;; Or :keymaps 'map-name
@@ -500,7 +527,13 @@
   :hook (lsp-mode . luna/lsp-setup)
   :config
   (lsp-enable-which-key-integration t)
-  (setq lsp-eldoc-enable-hover nil))
+  (setq lsp-eldoc-enable-hover nil)
+  (setq lsp-idle-delay 1.0)
+
+  (general-def luna/leader-map
+  "l" '(:keymaps lsp-mode-map :keymap lsp-command-map :which-key "lsp")
+  )
+)
 
 (use-package lsp-ui
   :commands lsp-ui-mode
@@ -535,6 +568,11 @@
 (use-package typescript-mode
   :mode "\\.ts\\'"
   :hook (typescript-mode . lsp-deferred)
+)
+
+(use-package slime
+  :config
+  (setq inferior-lisp-program "clisp")
 )
 
 (use-package term
