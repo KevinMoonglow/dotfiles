@@ -1,0 +1,13 @@
+#!/bin/fish
+
+i3status | begin read line && echo $line && read line && echo $line && read line && echo $line && while read line
+    set -l curr (mpc current)
+    set -l vol (mpc status '墳%volume%')
+    set -l state (mpc status '\[%state%\]')
+
+
+    set -l json (echo $line | sed 's/^,\[{//')
+    set -l json ',[{"full_text":"'$state $curr $vol'"},{'$json
+    echo -e $json || exit 1
+end
+end

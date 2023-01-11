@@ -1,0 +1,5 @@
+#!/usr/bin/fish
+
+if not tmux has -t kitty
+    kitty --class="KittyScratchpad" tmux new -t main -s kitty ';' set-option destroy-unattached on
+end

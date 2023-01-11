@@ -121,7 +121,7 @@ class Rofi(base.RunCommand):
     rofi_command: str
     defaults = [
         ("rofi_command", "rofi", "rofi command"),
-        ("modi", None, "Modi to enable"),
+        ("modi", "drun,run", "Modi to enable"),
         ("show", "drun", "Mode to show"),
     ]
 

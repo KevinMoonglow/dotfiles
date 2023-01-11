@@ -1,2 +1,10 @@
 \.git
+\.gitignore
+
 ^/.*\.org
+.+~          # emacs backup files
+\#.*\#       # emacs autosave files
+
+^/README.*
+^/LICENSE.*
+^/COPYING

@@ -1,0 +1,4 @@
+#!/bin/bin/fish
+
+
+kitty --class "KittyScratchpad"

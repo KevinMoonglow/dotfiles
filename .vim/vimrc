@@ -13,9 +13,11 @@ set backspace=indent,eol,start
 " fish shell confuses a lot of Vim plugins
 set shell=/bin/zsh
 let $SHELL="/bin/zsh"
+let $FZF_DEFAULT_COMMAND='fd -H --type f'
 
 set history=50
 set ruler
+set title
 
 " Silly Vim needs to be told how to use a mouse.
 set mouse=a
@@ -112,7 +114,11 @@ set relativenumber
 set numberwidth=5
 
 " === Vim Plugins ===
-call plug#begin('~/.vim/plugged')
+if has("nvim")
+	call plug#begin('~/.config/nvim/plugged')
+else
+	call plug#begin('~/.vim/plugged')
+endif
 
 " Syntax for fish scripts
 Plug 'khaveesh/vim-fish-syntax'
@@ -128,12 +134,17 @@ Plug 'liuchengxu/vim-which-key'
 Plug 'junegunn/fzf.vim'
 Plug 'orlp/vim-bunlink'
 
-" NeoVim Silliness ====
-Plug 'nvim-lua/plenary.nvim'
-" Used by neogit
-Plug 'sindrets/diffview.nvim'
-" Useful git management
-Plug 'TimUntersberger/neogit'
+" Provides scratch buffer
+Plug 'tomtom/tlib_vim'
+
+" Stuff that only works in NeoVim ====
+if has("nvim")
+	Plug 'nvim-lua/plenary.nvim'
+	" Used by neogit
+	Plug 'sindrets/diffview.nvim'
+	" Useful git management
+	Plug 'TimUntersberger/neogit'
+endif
 " =====================
 
 " Multiple cursors
@@ -153,6 +164,8 @@ Plug 'maxmellon/vim-jsx-pretty'
 
 " Typescript syntax
 Plug 'HerringtonDarkholme/yats'
+
+Plug 'vim-ctrlspace/vim-ctrlspace'
 call plug#end()
 " ======== End of Plugin definitions =======
 " Don't forget to run `:PlugInstall`!
@@ -192,6 +205,10 @@ function Luna__UserColors()
 		hi link WhichKeyGroup Keyword
 		hi link WhichKeyDesc Function
 		hi WhichKeyFloating guibg=navy ctermbg=17
+
+		" Something is breaking this association for some reason, and
+		" assigning a different one, so we have to force it with !
+		hi! link CocMenuSel PmenuSel
 endfunction
 
 augroup Luna__statuscols
@@ -203,6 +220,16 @@ augroup END
 set statusline=%<%f\ %h%m%r%1*%*%2*
 set statusline+=\ %{coc#status()}%{get(b:,'coc_current_function','')}
 set statusline+=%=%5*%4*%4P\ %3*%*%14.(%l,%c%V%)
+
+
+let g:CtrlSpaceDefaultMappingKey = "<C-space> "
+let g:CtrlSpaceEnableFilesCache = 0
+if executable("fd")
+	let g:CtrlSpaceGlobCommand = 'fd --type=file --color=never --hidden'
+endif
+
+au! BufNewFile,BufReadPost *.{yaml,yml} set filetype=yaml foldmethod=indent
+autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 
 
 " ============================================================================
@@ -226,6 +253,7 @@ no Y y$
 
 " Set how color codes are colorized.
 let g:Hexokinase_highlighters = [ 'backgroundfull' ]
+let g:Hexokinase_alpha_bg = '#000000'
 
 let g:fzf_preview_quit_map="<Esc>"
 
@@ -235,22 +263,25 @@ function Luna__installCOCPlugins()
 	CocInstall coc-tsserver
 	CocInstall coc-fzf-preview
 endfunction
-
 " Autocompletion keybinds for CoC
 inoremap <silent><expr> <TAB>
-       \ coc#pum#visible() ? coc#pum#next(1):
+       \ coc#pum#visible() ? coc#pum#confirm() :
        \ CheckBackspace() ? "\<Tab>" :
        \ coc#refresh()
-inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
 
+" inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
 function! CheckBackspace() abort
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
 
+inoremap <silent><expr> <c-j> coc#pum#visible() ? coc#pum#next(1) : "\<c-j>"
+inoremap <silent><expr> <c-k> coc#pum#visible() ? coc#pum#prev(1) : "\<c-k>"
+
 inoremap <silent><expr> <c-space> coc#refresh()
 "
-inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+"inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+inoremap <silent><expr> <CR> "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 " Highlight the symbol and its references when holding the cursor.
 
 " Highlight a symbol when hoving over it
@@ -287,6 +318,8 @@ endfunction
 nnoremap <silent> K :call ShowDocumentation()<CR>
 
 
+let g:which_key_map[' '] = ['CtrlSpace', '+CtrlSpace'] 
+nn <leader><Space> <cmd>CtrlSpace<cr>
 
 
 " The find file keymap
@@ -364,6 +397,16 @@ else
 	nn <leader>gg <cmd>echohl ErrorMsg<cr><cmd>echo "Can't do this without NeoVim"<cr><cmd>echohl None<cr>
 	nn <leader>gc <cmd>echohl ErrorMsg<cr><cmd>echo "Can't do this without NeoVim"<cr><cmd>echohl None<cr>
 endif
+
+" Project
+"
+"
+let g:which_key_map.p = {'name': "+project"}
+let g:which_key_map.p.p = "Switch Project"
+let g:which_key_map.p.f = "Open File"
+
+nn <leader>pp <cmd>CtrlSpace b<cr>
+nn <leader>pf <cmd>CtrlSpace O<cr>
 
 
 " This is my attempt to add which-key support to a native vim prefix like

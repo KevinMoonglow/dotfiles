@@ -21,6 +21,16 @@
 (setq lsp-ui-sideline-update-mode "line")
 (setq gc-cons-threshold 100000000)
 (setq read-process-output-max (* 1024 1024)) ;; 1mb
+(setq mouse-wheel-progressive-speed nil)
+
+(setq mouse-wheel-scroll-amount '(3
+                                 ((shift)
+                                  . hscroll)
+                                 ((meta))
+                                 ((control meta)
+                                  . global-text-scale)
+                                 ((control)
+                                  . text-scale)))
 
 (require 'package)
 
@@ -472,12 +482,16 @@
   ;(general-nmap org-mode-map "TAB" 'org-cycle)
   (general-imap "C-g" 'evil-normal-state)
   (general-def company-active-map "<tab>" 'company-complete-selection)
+  (general-def company-active-map "<return>" nil)
   (general-imap lsp-mode-map "<tab>" 'company-indent-or-complete-common)
   ;(general-imap term-mode-map "C-d" 'term-delchar-or-maybe-eof)
   (general-def exwm-mode-map "M-SPC" 'luna/leader-map)
 
   (general-def ivy-minibuffer-map "C-j" 'ivy-next-line)
   (general-def ivy-minibuffer-map "C-k" 'ivy-previous-line)
+  (general-def ivy-switch-buffer-map "C-j" 'ivy-next-line)
+  (general-def ivy-switch-buffer-map "C-k" 'ivy-previous-line)
+  (general-def ivy-switch-buffer-map "C-S-k" 'ivy-switch-buffer-kill)
 )
 
 (use-package hydra)
@@ -509,6 +523,9 @@
 
 (use-package treemacs
   :defer t)
+
+(use-package tramp)
+(use-package counsel-tramp)
 
 (defun luna/lsp-setup ()
   (setq lsp-headerline-breadcrumb-segments '(file symbols))
@@ -566,14 +583,31 @@
   :hook (company-mode . company-box-mode))
 
 (use-package typescript-mode
-  :mode "\\.ts\\'"
-  :hook (typescript-mode . lsp-deferred)
+   :mode "\\.ts\\'"
+   :hook (typescript-mode . lsp-deferred)
 )
 
 (use-package slime
   :config
   (setq inferior-lisp-program "clisp")
 )
+
+(use-package haskell-mode
+  :mode "\\.hs\\'"
+  :hook (haskell-mode . lsp-deferred)
+)
+
+(use-package lua-mode
+  :mode "\\.lua\\'"
+  :hook (lua-mode . lsp-deferred)
+)
+
+(use-package rust-mode
+  :mode "\\.rs\\'"
+  :hook (rust-mode . lsp-deferred)
+)
+
+
 
 (use-package term
   :config
