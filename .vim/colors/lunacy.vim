@@ -47,6 +47,7 @@ highlight TabLine          guifg=white        guibg=navy        gui=none
 highlight TabLineSel       guifg=yellow       guibg=blue        gui=none
 highlight Title            guifg=#00FF00                        gui=Underline   guisp=#00FF00
 highlight Underlined       guifg=fg                             gui=Underline   guisp=fg
+highlight FloatBorder      guifg=white        guibg=NONE
 
 
 " Console
@@ -84,4 +85,5 @@ highlight TabLineFill      ctermfg=17         ctermbg=white     cterm=reverse
 highlight TabLine          ctermfg=white      ctermbg=17        cterm=none
 highlight TabLineSel       ctermfg=yellow     ctermbg=darkblue  cterm=none
 highlight Title            ctermfg=green                        cterm=underline
+highlight FloatBorder      ctermfg=white      ctermbg=NONE
 

@@ -39,12 +39,13 @@ exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork -e -c '#0
 
 exec --no-startup-id xrandr --output HDMI-0 --rotate left --mode 1920x1080 --rate 144 --output DP-0 --primary --pos 0x480 -s 3640x1440
 exec --no-startup-id dunst
+exec --no-startup-id copyq --start-server hide
 exec --no-startup-id sh ~/.fehbg
 exec --no-startup-id setxkbmap -option caps:ctrl_modifier
 exec --no-startup-id setxkbmap -option compose:ralt
 exec --no-startup-id picom
 
-exec_always --no-startup-id $HOME/.config/polybar/launch.sh
+exec_always --no-startup-id $HOME/.config/olybar/launch.sh
 
 exec_always --no-startup-id $HOME/.config/bin/spawn_unique_kitty_tmux
 
@@ -222,6 +223,7 @@ set $ws8 "8:₈"
 set $ws9 "9:₉"
 set $ws10 "10:₁₀"
 
+workspace $ws3 output nonprimary
 
 
 # switch to workspace
@@ -321,7 +323,7 @@ assign [class="Moonlight"] $ws5
 # Setup kitty scratchpad
 for_window [class="KittyScratchpad"] move scratchpad
 #bindsym $mod+grave [class="KittyScratchpad"] scratchpad show, move output DP-0, move position center; focus output DP-0
-bindsym $mod+grave [class="KittyScratchpad"] scratchpad show, move position center
+bindsym $mod+grave [class="KittyScratchpad"] scratchpad show, move output primary, move position center; focus output primary
 
 set $mode_gaps Gaps: %{U#FFF}i%{U-}nner %{U#FFF}o%{U-}uter
 set $mode_gaps_inner inner gaps

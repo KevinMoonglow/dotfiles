@@ -1,0 +1,3 @@
+#!/bin/fish
+export QT_QPA_PLATFORMTHEME=qt5ct
+ibus-daemon -drxR

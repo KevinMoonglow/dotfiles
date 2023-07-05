@@ -266,7 +266,7 @@ function Luna__installCOCPlugins()
 	CocInstall coc-pyright
 	CocInstall coc-tsserver
 	CocInstall coc-fzf-preview
-	#CocInstall coc-lua
+	" CocInstall coc-lua
 	CocInstall coc-sumneko-lua
 	CocInstall coc-yaml
 endfunction
