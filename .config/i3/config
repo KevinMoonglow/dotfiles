@@ -37,7 +37,7 @@ exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork -e -c '#0
 # and nm-applet is a desktop environment-independent system tray GUI for it.
 #exec --no-startup-id nm-applet
 
-exec --no-startup-id xrandr --output HDMI-0 --rotate left --mode 1920x1080 --rate 144 --output DP-0 --primary --pos 0x480 -s 3640x1440
+exec --no-startup-id fish ~/.config/bin/setup_displays.fish
 exec --no-startup-id dunst
 exec --no-startup-id copyq --start-server hide
 exec --no-startup-id sh ~/.fehbg
