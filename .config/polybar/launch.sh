@@ -8,7 +8,13 @@ polybar-msg cmd quit
 
 # Launch bar1 and bar2
 echo "---" | tee -a /tmp/polybar1.log /tmp/polybar2.log
-polybar main 2>&1 | tee -a /tmp/polybar1.log & disown
-polybar side 2>&1 | tee -a /tmp/polybar2.log & disown
+
+if [[ "$(hostname)" == "wolf" ]]; then
+	MONITOR=DP-0 polybar main 2>&1 | tee -a /tmp/polybar1.log & disown
+	MONITOR=HDMI-0 polybar side 2>&1 | tee -a /tmp/polybar2.log & disown
+elif [[ "$(hostname)" == "fennec" ]]; then
+	MONITOR=HDMI-0 polybar main 2>&1 | tee -a /tmp/polybar1.log & disown
+	MONITOR=DP-0 polybar side 2>&1 | tee -a /tmp/polybar2.log & disown
+fi
 
 echo "Bars launched..."

@@ -61,7 +61,7 @@ o.numberwidth = 5
 o.termguicolors = true
 
 
-o.backupdir = "~/.local/state/nvim/backup"
+o.backupdir = vim.fn.expand("~/.local/state/nvim/backup")
 
 -- nvim-qt font settings at: [../nvim-qt/nvim-qt.conf]
 
@@ -141,9 +141,16 @@ lsp.on_attach(function(client, bufnr)
 end)
 
 -- " (Optional) Configure lua language server for neovim
-require('lspconfig').lua_ls.setup(lsp.nvim_lua_ls())
-
+--require('lspconfig').lua_ls.setup(lsp.nvim_lua_ls())
+require('lspconfig').lua_ls.setup({
+	Lua = {
+		hint = {
+			enable = true,
+		}
+	}
+})
 lsp.setup()
+
 
 -- You need to setup `cmp` after lsp-zero
 local cmp = require('cmp')
@@ -223,7 +230,7 @@ vim.api.nvim_create_autocmd({"BufReadPost"}, {
 })
 
 
-o.statusline = [[%<%f %h%m%r%1*%*%2*]] ..
+vim.o.statusline = [[%<%f %h%m%r%1*%*%2*]] ..
                [[%=%5*%4*%4P %3*%*%14.(%l,%c%V%)]]
 
 

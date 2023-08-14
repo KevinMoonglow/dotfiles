@@ -1,0 +1,25 @@
+#!/bin/fish
+
+argparse -nscreenshot -X1 'h/help' 's/selection' 'a/active' 'm/monitor' -- $argv
+or return
+
+set -l clip xclip -t 'image/png' -selection clipboard
+
+
+if test -n "$_flag_h"; or test -z "$argv$_flag_h$_flag_s$_flag_a$_flag_m"
+    echo "screenshot [options]"
+    echo "	-h	--help	Help"
+    echo "	-s	--selection	Select what to screenshot"
+    echo "	-a	--active	Screenshot active window"
+    echo "	-m	--monitor	Screenshot current monitor"
+    return
+else if test -n "$_flag_s"
+    set -l sel (string split ' ' -- (hacksaw -r1 -f '-i %i -g %g' -c '#ffaadd' -g 2 -s 2))
+
+    shotgun $sel - | $clip
+else if test -n "$_flag_a"
+    shotgun -i (xdotool getactivewindow) - | $clip
+else if test -n "$_flag_m"
+    shotgun -s - | $clip
+end
+
