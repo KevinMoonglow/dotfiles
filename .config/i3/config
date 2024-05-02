@@ -40,15 +40,15 @@ exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork -e -c '#0
 exec --no-startup-id fish ~/.config/bin/setup_displays.fish
 exec --no-startup-id dunst
 exec --no-startup-id copyq --start-server hide
-exec --no-startup-id sh ~/.fehbg
 exec --no-startup-id setxkbmap -option caps:ctrl_modifier
 exec --no-startup-id setxkbmap -option compose:ralt
 exec --no-startup-id picom
 
-exec_always --no-startup-id $HOME/.config/olybar/launch.sh
+exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 
 exec_always --no-startup-id $HOME/.config/bin/spawn_unique_kitty_tmux
 
+exec_always --no-startup-id sh ~/.fehbg
 
 #class                  border     bg         text     indicator  child_border
 client.focused          #af00afaa  #af00afaa  #ffffff  #ffffff    #ffaaddcc
@@ -68,16 +68,19 @@ set $vol_sound /usr/share/sounds/freedesktop/stereo/audio-volume-change.oga
 
 # Use pactl to adjust volume in PulseAudio.
 set $refresh_i3status killall -SIGUSR1 i3status
-bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +5% && play $vol_sound
-bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -5% && play $vol_sound
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +2% && play $vol_sound
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -2% && play $vol_sound
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
 bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
 
 bindsym XF86AudioPlay exec --no-startup-id mpc toggle
 bindsym XF86AudioNext exec --no-startup-id mpc next
 bindsym XF86AudioPrev exec --no-startup-id mpc prev
-bindsym Ctrl+XF86AudioRaiseVolume exec --no-startup-id mpc volume +5 && play $vol_sound
-bindsym Ctrl+XF86AudioLowerVolume exec --no-startup-id mpc volume -5 && play $vol_sound
+bindsym Ctrl+XF86AudioRaiseVolume exec --no-startup-id mpc volume +2 && play $vol_sound
+bindsym Ctrl+XF86AudioLowerVolume exec --no-startup-id mpc volume -2 && play $vol_sound
+
+bindsym --whole-window $mod+button4 exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +2% && play $vol_sound
+bindsym --whole-window $mod+button5 exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -2% && play $vol_sound
 
 
 # Use Mouse+$mod to drag floating windows to their wanted position
@@ -149,6 +152,7 @@ mode "$mode_control" {
 
 	bindsym Escape mode "default"
 	bindsym o open, mode "default"
+
 }
 
 set $mode_screenshot *SCREENSHOT*
@@ -320,12 +324,17 @@ for_window [class="feh"] floating enable
 for_window [class="Sxiv"] floating enable
 for_window [class="Nsxiv"] floating enable
 for_window [class="love"] floating enable
+for_window [instance="Godot_Engine" class="^(?!Godot).*"] floating enable
+#for_window [instance="Godot_Editor" window_type="^(?!utility).*"] floating disable
+for_window [class="steam" title="^notificationtoasts_"] floating enable
+no_focus [class="steam" title="^notificationtoasts_"]
 
 for_window [all] title_window_icon on
 
 assign [class="firefox"] $ws4
 assign [class="discord"] $ws3
 assign [class="Moonlight"] $ws5
+assign [class="steam"] $ws5
 
 # Setup kitty scratchpad
 for_window [class="KittyScratchpad"] move scratchpad
@@ -381,4 +390,9 @@ mode "$mode_music" {
 	bindsym p exec --no-startup-id ~/.config/bin/mpc_find_in_playlist, mode "default"
 
 	bindsym n exec $terminal -e ncmpcpp, mode "default"
+
+	bindsym XF86AudioRaiseVolume exec --no-startup-id mpc volume +2 && play $vol_sound
+	bindsym XF86AudioLowerVolume exec --no-startup-id mpc volume -2 && play $vol_sound
+	bindsym --whole-window button4 exec --no-startup-id mpc volume +2 && play $vol_sound
+	bindsym --whole-window button5 exec --no-startup-id mpc volume -2 && play $vol_sound
 }
