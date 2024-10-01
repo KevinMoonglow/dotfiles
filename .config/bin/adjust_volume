@@ -1,0 +1,34 @@
+#!/usr/bin/env fish
+set -f vol_sound /usr/share/sounds/freedesktop/stereo/audio-volume-change.oga
+
+if test $argv[1] = "mpd" -o $argv[1] = "mpc"
+    set -f change $argv[2]
+    mpc -q volume $change
+
+    set -f new_vol (mpc volume | awk -F: '{print +$2}')
+    set -f is_mute no
+else
+    if test $argv[1] = "mute"
+        pactl set-sink-mute @DEFAULT_SINK@ $argv[2]
+    else
+        set -f change $argv[1]
+        pactl set-sink-volume @DEFAULT_SINK@ $change'%'
+    end
+
+    set -f new_vol (pactl get-sink-volume @DEFAULT_SINK@ | head -1 | awk '{print ($5 + $12) / 2}')
+    set -f is_mute (pactl get-sink-mute @DEFAULT_SINK@ | awk '{print $2}')
+end
+
+if test $is_mute != "yes"
+    play -q $vol_sound &
+end
+
+if test $is_mute = "yes"
+    set -f vicon "󰝟"
+else if test $change -gt 0
+    set -f vicon ""
+else
+    set -f vicon ""
+end
+
+notify-send -h string:x-canonical-private-synchronous:volume "$vicon Volume ($new_vol%)" -i " " -h int:value:$new_vol

@@ -4,7 +4,7 @@
     ### Display ###
 
     # Which monitor should the notifications be displayed on.
-    monitor = 0
+    monitor = DP-1
 
     # Display notification on focused monitor.  Possible modes are:
     #   mouse: follow mouse pointer
@@ -22,7 +22,7 @@
     ### Geometry ###
 
     # dynamic width from 0 to 300
-    width = (0, 600)
+    width = (300, 800)
     # constant width of 300
     # width = 300
 
@@ -33,7 +33,7 @@
     origin = bottom-right
 
     # Offset from the origin
-    offset = 10x50
+    offset = 10x10
 
     # Scale factor. It is auto-detected if value is 0.
     scale = 0
@@ -49,7 +49,7 @@
 
     # Set the progress bar height. This includes the frame, so make sure
     # it's at least twice as big as the frame width.
-    progress_bar_height = 10
+    progress_bar_height = 14
 
     # Set the frame width of the progress bar
     progress_bar_frame_width = 1
@@ -58,7 +58,9 @@
     progress_bar_min_width = 150
 
     # Set the maximum width for the progress bar
-    progress_bar_max_width = 300
+    progress_bar_max_width = 600
+
+	highlight = "#ffaafc"
 
 
     # Show how many messages are currently hidden (because of
@@ -77,20 +79,20 @@
     separator_height = 0
 
     # Padding between text and separator.
-    padding = 1
+    padding = 10
 
     # Horizontal padding.
-    horizontal_padding = 1
+    horizontal_padding = 8
 
     # Padding between text and icon.
     text_icon_padding = 8
 
     # Defines width in pixels of frame around the notification window.
     # Set to 0 to disable.
-    frame_width = 0
+    frame_width = 1
 
     # Defines color of the frame around the notification window.
-    frame_color = "#000044"
+    frame_color = "#ffaafc"
 
     # Size of gap to display between notifications - requires a compositor.
     # If value is greater than 0, separator_height will be ignored and a border
@@ -158,7 +160,7 @@
     #   %n  progress value if set without any extra characters
     #   %%  Literal %
     # Markup is allowed
-    format = "▌<b>%s</b>\n%b"
+    format = "%s\n%b"
 
     # Alignment of message text.
     # Possible values are "left", "center" and "right".
@@ -196,7 +198,7 @@
     enable_recursive_icon_lookup = true
 
     # Set icon theme (only used for recursive icon lookup)
-    icon_theme = Adwaita
+    icon_theme = Papirus-dark, Adwaita
     # You can also set multiple icon themes, with the leftmost one being used first.
     # icon_theme = "Adwaita, breeze"
 
@@ -245,7 +247,7 @@
     # corners.
     # The radius will be automatically lowered if it exceeds half of the
     # notification height to avoid clipping text and/or icons.
-    corner_radius = 0
+    corner_radius = 10
 
     # Ignore the dbus closeNotification message.
     # Useful to enforce the timeout set by dunst configuration. Without this
@@ -308,14 +310,15 @@
 [urgency_low]
     # IMPORTANT: colors have to be defined in quotation marks.
     # Otherwise the "#" and following would be interpreted as a comment.
-    background = "#222222aa"
+    background = "#000000cc"
     foreground = "#ffffff"
+	frame_color = "#29315a"
     timeout = 10
     # Icon for notifications with low urgency, uncomment to enable
     #default_icon = /path/to/icon
 
 [urgency_normal]
-    background = "#004488cc"
+    background = "#000000cc"
     foreground = "#ffffff"
     timeout = 10
     # Icon for notifications with normal urgency, uncomment to enable

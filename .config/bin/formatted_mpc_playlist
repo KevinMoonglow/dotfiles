@@ -5,12 +5,18 @@ set -l entries (mpc playlist -f '%title%	%album%	%artist%	%file%')
 for e in $entries
     set -l item (string split "	" $e)
     
-    set -l title (string sub --length 60 $item[1])
-    set -l album (string sub --length 25 $item[2])
-    set -l artist (string sub --length 20 $item[3])
     set -l filename $item[4]
 
+    if test -z (string trim $item[1])
+        set -f title (string sub --length 50 (basename $item[4]))
+    else
+        set -f title (string sub --length 50 $item[1])
+    end
+
+    set -l album (string sub --length 25 $item[2])
+    set -l artist (string sub --length 20 $item[3])
 
 
-    printf "%-60s	%-25s %-20s	%s	%s	%s	%s\n" $title $album $artist $item[1] $item[2] $item[3] $filename
+
+    printf "🎵 %-50s	%-25s %-20s	%s	%s	%s	%s\n" $title $album $artist $item[1] $item[2] $item[3] $filename
 end

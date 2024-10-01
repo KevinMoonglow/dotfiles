@@ -29,6 +29,7 @@ highlight Statement        guifg=White                          gui=NONE
 highlight Type             guifg=LightGreen                     gui=none
 highlight Identifier       guifg=Cyan
 highlight Constant         guifg=Yellow
+highlight String           guifg=Yellow
 highlight Number           guifg=#00FF00
 highlight PreProc          guifg=#00FF00
 highlight Operator         guifg=LightGreen
@@ -48,6 +49,7 @@ highlight TabLineSel       guifg=yellow       guibg=blue        gui=none
 highlight Title            guifg=#00FF00                        gui=Underline   guisp=#00FF00
 highlight Underlined       guifg=fg                             gui=Underline   guisp=fg
 highlight FloatBorder      guifg=white        guibg=NONE
+highlight Todo             guifg=yellow  	  guibg=blue        gui=Underline
 
 
 " Console
@@ -68,6 +70,7 @@ highlight Statement        ctermfg=White
 highlight Type             ctermfg=LightGreen                   cterm=NONE
 highlight Identifier       ctermfg=Cyan
 highlight Constant         ctermfg=Yellow
+highlight String           ctermfg=Yellow
 highlight Number           ctermfg=Green
 highlight PreProc          ctermfg=Green
 highlight Operator         ctermfg=LightGreen

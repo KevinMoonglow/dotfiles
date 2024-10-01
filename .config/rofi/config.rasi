@@ -26,7 +26,7 @@ configuration {
 /*	sorting-method: "normal";*/
 /*	case-sensitive: false;*/
 /*	cycle: true;*/
-/*	sidebar-mode: false;*/
+	sidebar-mode: false;
 /*	hover-select: false;*/
 /*	eh: 1;*/
 /*	auto-select: false;*/
@@ -54,11 +54,11 @@ configuration {
 /*	steal-focus: false;*/
 /*	application-fallback-icon: ;*/
 /*	pid: "/run/user/40000/rofi.pid";*/
-/*	display-window: ;*/
+	display-window: " Windows";
 /*	display-windowcd: ;*/
-/*	display-run: ;*/
+	display-run: " Run command";
 /*	display-ssh: ;*/
-/*	display-drun: ;*/
+	display-drun: "󰣆 Programs";
 /*	display-combi: ;*/
 /*	display-keys: ;*/
 /*	display-filebrowser: ;*/

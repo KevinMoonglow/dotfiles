@@ -31,18 +31,19 @@ font pango:Terminus Bold 15
 
 # xss-lock grabs a logind suspend inhibit lock and will use i3lock to lock the
 # screen before suspend. Use loginctl lock-session to lock your screen.
-exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork -e -c '#000044'
+# exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork -e -c '#000044'
 
 # NetworkManager is the most popular way to manage wireless networks on Linux,
 # and nm-applet is a desktop environment-independent system tray GUI for it.
 #exec --no-startup-id nm-applet
 
-exec --no-startup-id fish ~/.config/bin/setup_displays.fish
 exec --no-startup-id dunst
 exec --no-startup-id copyq --start-server hide
+exec --no-startup-id picom
+
+exec --no-startup-id fish ~/.config/bin/setup_displays.fish
 exec --no-startup-id setxkbmap -option caps:ctrl_modifier
 exec --no-startup-id setxkbmap -option compose:ralt
-exec --no-startup-id picom
 
 exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 
@@ -51,18 +52,21 @@ exec_always --no-startup-id $HOME/.config/bin/spawn_unique_kitty_tmux
 exec_always --no-startup-id sh ~/.fehbg
 
 #class                  border     bg         text     indicator  child_border
-client.focused          #af00afaa  #af00afaa  #ffffff  #ffffff    #ffaaddcc
-client.focused_inactive #0000afaa  #0000afaa  #ffffff  #ffffff    #000000aa
-client.unfocused        #000000aa  #000000aa  #ffffff  #ffffff    #000000aa
+client.focused          #af00afaa  #CA7DC788  #ffffff  #ffffff    #ffaaddcc
+client.focused_inactive #0000afaa  #0000af88  #ffffff  #ffffff    #000000aa
+client.unfocused        #000000dd  #00000055  #ffffff  #ffffff    #000000aa
 client.urgent           #aa4444aa  #000000aa  #ffffff  #ffffff    #aa4444aa
 client.placeholder      #000000aa  #ffaaddaa  #ffffff  #000000    #ffaaddaa
 
-default_border pixel 3
+default_border pixel 2
+default_floating_border pixel 2
 gaps inner 12
 smart_borders on
 smart_gaps off
 focus_follows_mouse no
 #hide_edge_borders smart
+
+popup_during_fullscreen smart
 
 set $vol_sound /usr/share/sounds/freedesktop/stereo/audio-volume-change.oga
 
@@ -82,6 +86,7 @@ bindsym Ctrl+XF86AudioLowerVolume exec --no-startup-id mpc volume -2 && play $vo
 bindsym --whole-window $mod+button4 exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +2% && play $vol_sound
 bindsym --whole-window $mod+button5 exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -2% && play $vol_sound
 
+bindsym $mod+m exec --no-startup-id bash ~/.config/bin/mute_active_window.sh
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
@@ -103,7 +108,7 @@ bindsym $mod+w kill
 # There also is i3-dmenu-desktop which only displays applications shipping a
 # .desktop file. It is a wrapper around dmenu, so you need that installed.
 # bindcode $mod+40 exec --no-startup-id i3-dmenu-desktop
-bindsym $mod+r exec "rofi -modi drun,run -show drun"
+bindsym $mod+r exec "rofi -x11 -modi drun,run -show drun"
 
 # change focus
 bindsym $mod+j focus down
@@ -172,7 +177,7 @@ mode "$mode_screenshot" {
 	bindsym Escape mode "default"
 }
 
-set $mode_exec Exec: %{U#FFF}%{+u}c%{-u}onfig | %{+u}e%{-u}macs | %{+u}w%{-u} firefox
+set $mode_exec Exec:%{-u} %{U#FFF}%{+u}c%{-u}onfig | %{+u}e%{-u}macs | %{+u}w%{-u} firefox
 bindsym $mod+x mode "$mode_exec"
 
 mode "$mode_exec" {
@@ -203,6 +208,7 @@ bindsym $mod+F11 fullscreen toggle
 bindsym $mod+s layout stacking
 bindsym $mod+t layout tabbed
 bindsym $mod+e layout toggle split
+bindsym $mod+Shift+e split toggle
 bindsym $mod+space layout toggle all
 bindsym $mod+Shift+Return layout toggle stacking splitv
 
@@ -325,14 +331,18 @@ for_window [class="Sxiv"] floating enable
 for_window [class="Nsxiv"] floating enable
 for_window [class="love"] floating enable
 for_window [instance="Godot_Engine" class="^(?!Godot).*"] floating enable
-#for_window [instance="Godot_Editor" window_type="^(?!utility).*"] floating disable
+for_window [instance="Godot_Editor" class="Godot"] floating disable
+for_window [instance="Godot_Editor" class="Godot" window_type="utility"] floating enable
 for_window [class="steam" title="^notificationtoasts_"] floating enable
+for_window [class="Pavucontrol"] floating enable
 no_focus [class="steam" title="^notificationtoasts_"]
 
 for_window [all] title_window_icon on
 
 assign [class="firefox"] $ws4
+assign [class="Brave-browser"] $ws4
 assign [class="discord"] $ws3
+assign [class="vesktop"] $ws3
 assign [class="Moonlight"] $ws5
 assign [class="steam"] $ws5
 
@@ -362,7 +372,7 @@ mode "$mode_gaps_inner" {
 	bindsym Shift+plus gaps inner all plus 6
 	bindsym Shift+minus gaps inner all minus 6
 	bindsym Shift+0 gaps inner all set 0
-	bindsym Shift+space gapsinner all set 12
+	bindsym Shift+space gaps inner all set 12
 
 	bindsym o mode "$mode_gaps_outer"
 }
@@ -377,7 +387,7 @@ mode "$mode_gaps_outer" {
 	bindsym Shift+plus gaps outer all plus 6
 	bindsym Shift+minus gaps outer all minus 6
 	bindsym Shift+0 gaps outer all set 0
-	bindsym space gaps outer all set 0
+	bindsym Shift+space gaps outer all set 0
 
 	bindsym i mode "$mode_gaps_inner"
 }

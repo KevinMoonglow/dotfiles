@@ -30,11 +30,16 @@ local o = vim.o
 vim.cmd.colors "lunacy"
 
 -- Avoid issues with default shell being fish
-o.shell = "/bin/zsh"
-vim.env.SHELL = "/bin/zsh"
+o.shell = "/bin/bash"
+vim.env.SHELL = "/bin/bash"
+
+vim.cmd.aunmenu "PopUp.How-to\\ disable\\ mouse"
+vim.cmd.aunmenu "PopUp.-1-"
+
 
 -- Display title in gui
 o.title = true
+o.titlestring = " %t (%f)"
 
 -- Because 8 is just a bit ridiculous
 o.tabstop = 4
@@ -67,7 +72,8 @@ o.backupdir = vim.fn.expand("~/.local/state/nvim/backup")
 
 
 -- Make the which-key menu come up quicker.
-o.timeout = 300
+o.timeout = true
+o.timeoutlen = 300
 
 
 
@@ -95,6 +101,7 @@ Plug 'tpope/vim-fugitive'
 
 -- LSP Support
 Plug 'neovim/nvim-lspconfig'                               -- Required
+Plug 'tamago324/nlsp-settings.nvim'
 Plug('williamboman/mason.nvim', {['do'] = ':MasonUpdate'}) -- Optional
 Plug 'williamboman/mason-lspconfig.nvim'                   -- Optional
 
@@ -124,6 +131,10 @@ Plug 'alunny/pegjs-vim'
 -- Visualize indentation
 Plug 'Yggdroot/indentLine'
 
+Plug 'nvimdev/dashboard-nvim'
+
+Plug 'fladson/vim-kitty'
+
 vim.call("plug#end")
 
 
@@ -131,9 +142,21 @@ Luna = {}
 local lsp = require('lsp-zero').preset("recommended")
 
 lsp.ensure_installed{
-	'tsserver',
+--	'tsserver',
 	'rust_analyzer',
 }
+
+local nlspsettings = require("nlspsettings")
+
+nlspsettings.setup({
+  config_home = vim.fn.stdpath('config') .. '/nlsp-settings',
+  local_settings_dir = ".nlsp-settings",
+  local_settings_root_markers_fallback = { '.git' },
+  append_default_schemas = true,
+  loader = 'json'
+})
+
+
 
 
 lsp.on_attach(function(client, bufnr)
@@ -189,21 +212,22 @@ function Luna.userColors()
 	local hi = vim.api.nvim_set_hl
 	hi(0, "StatusLine", {fg="#dd65dd", bg="white", reverse=true,
 							ctermfg=170, ctermbg="white"})
-	hi(0, "StatusLineNC", {fg="Gray40", bg="white", reverse=true,
+	hi(0, "StatusLineNC", {fg="#01579b", bg="white", reverse=true,
 
 							ctermfg=241, ctermbg="white"})
 
-	hi(0, "User1", {fg="#dd65dd", bg="darkblue", ctermfg=170, ctermbg=17})
-	hi(0, "User2", {fg="white",   bg="darkblue", ctermfg="white", ctermbg=17})
+	hi(0, "User1", {fg="#dd65dd", bg="#29315a", ctermfg=170, ctermbg=17})
+	hi(0, "User2", {fg="white",   bg="#29315a", ctermfg="white", ctermbg=17})
 	hi(0, "User3", {fg="#dd65dd", bg="#aa35aa", ctermfg=170, ctermbg=127})
 	hi(0, "User4", {fg="white",   bg="#aa35aa", ctermfg="white", ctermbg=127})
-	hi(0, "User5", {fg="#aa35aa", bg="darkblue", ctermfg=127, ctermbg=17})
+	hi(0, "User5", {fg="#aa35aa", bg="#29315a", ctermfg=127, ctermbg=17})
 
 	hi(0, "WhichKey", {link="String"})
 	hi(0, "WhichKeySeperator", {link="Comment"})
 	hi(0, "WhichKeyGroup", {link="Keyword"})
 	hi(0, "WhichKeyDesc", {link="Function"})
-	hi(0, "WhichKeyFloat", {link="User1"})
+	hi(0, "WhichKeyNormal", {link="User1"})
+	hi(0, "WhichKeyTitle", {link="User2"})
 	hi(0, "WhichKeyBorder", {link="User1"})
 
 	--hi(0, "WhichKeyFloating", {fg="fg", bg="navy", ctermbg=17})
@@ -229,6 +253,15 @@ vim.api.nvim_create_autocmd({"BufReadPost"}, {
 	group = "Luna__setup",
 })
 
+vim.api.nvim_create_autocmd({"FileType"}, {
+	pattern = "dashboard",
+	callback = function()
+		vim.cmd 'IndentLinesDisable'
+		vim.cmd.redraw()
+	end,
+	group = "Luna__setup",
+})
+
 
 vim.o.statusline = [[%<%f %h%m%r%1*%*%2*]] ..
                [[%=%5*%4*%4P %3*%*%14.(%l,%c%V%)]]
@@ -242,6 +275,7 @@ require'nvim-treesitter.configs'.setup{
 
 vim.g.indentLine_char_list = {'│', '┇', '┊', '┃', '┆', '┋'}
 vim.g.vim_json_conceal = 0
+--vim.g.indentLine_setConceal = 0
 
 vim.g.Hexokinase_highlighters = { 'backgroundfull' }
 vim.g.Hexokinase_alpha_bg = '#000000'
@@ -251,12 +285,18 @@ vim.g.Hexokinase_alpha_bg = '#000000'
 --======== Keybindings =======================================================
 local wk = require("which-key")
 wk.setup{
-	window = {
+	win = {
 		border = "single",
-		winblend = 0,
-	}
+		wo = {
+			winblend = 0,
+		}
+	},
 }
 
+
+function tbind(x) return function() return vim.cmd('silent! tabn ' .. x) end end
+
+--[[
 LeaderMap = {name = "+leader"}
 
 LeaderMap.b = {name = "+buffer"}
@@ -268,7 +308,6 @@ LeaderMap.w = {name = "+window"}
 local TabMap = {name = "+tab"}
 LeaderMap["<tab>"] = TabMap
 
-function tbind(x) return function() return vim.cmd('silent! tabn ' .. x) end end
 
 
 TabMap['<Tab>'] = {"gt", "Next Tab"}
@@ -325,6 +364,69 @@ LeaderMap.u = {vim.cmd.UndotreeToggle, "Undo Tree"}
 
 LeaderMap.g.g = {vim.cmd.Git, "Git Status"}
 
+wk.register(LeaderMap, {prefix = "<leader>"})
+--]]
+
+wk.add({
+    { "<leader>", group = "leader" },
+    { "<leader>-", vim.cmd.Ex, desc = "Manage Files" },
+    { "<leader><tab>", group = "tab" },
+    { "<leader><tab>0", tbind "0", desc = "Last Tab" },
+    { "<leader><tab>1", tbind "1", desc = "Tab 1" },
+    { "<leader><tab>2", tbind "2", desc = "Tab 2" },
+    { "<leader><tab>3", tbind "3", desc = "Tab 3" },
+    { "<leader><tab>4", tbind "4", desc = "Tab 4" },
+    { "<leader><tab>5", tbind "5", desc = "Tab 5" },
+    { "<leader><tab>6", tbind "6", desc = "Tab 6" },
+    { "<leader><tab>7", tbind "7", desc = "Tab 7" },
+    { "<leader><tab>8", tbind "8", desc = "Tab 8" },
+    { "<leader><tab>9", tbind "9", desc = "Tab 9" },
+    { "<leader><tab><C-Tab>", "gT", desc = "Prev Tab" },
+    { "<leader><tab><Tab>", "gt", desc = "Next Tab" },
+    { "<leader><tab>N", vim.cmd.tabnew, desc = "New Tab" },
+    { "<leader><tab>[", "gT", desc = "Prev Tab" },
+    { "<leader><tab>]", "gt", desc = "Next Tab" },
+    { "<leader><tab>d", vim.cmd.tabclose, desc = "Close Tab" },
+    { "<leader>[", vim.cmd.bprev, desc = "Prev" },
+    { "<leader>]", vim.cmd.bnext, desc = "Next" },
+    { "<leader>b", group = "buffer" },
+    { "<leader>bN", vim.cmd.enew, desc = "New Buffer" },
+    { "<leader>b[", vim.cmd.bprev, desc = "Prev" },
+    { "<leader>b]", vim.cmd.bnext, desc = "Next" },
+    { "<leader>bd", vim.cmd.bdelete, desc = "Delete Buffer" },
+    { "<leader>bn", vim.cmd.bnext, desc = "Next" },
+    { "<leader>bp", vim.cmd.bprev, desc = "Prev" },
+    { "<leader>g", group = "git" },
+    { "<leader>gg", vim.cmd.Git, desc = "Git Status" },
+    { "<leader>h", "<C-w>h", desc = "Window ←" },
+    { "<leader>j", "<C-w>j", desc = "Window ↓" },
+    { "<leader>k", "<C-w>k", desc = "Window ↑" },
+    { "<leader>l", "<C-w>l", desc = "Window →" },
+    { "<leader>p", group = "project" },
+    { "<leader>u", vim.cmd.UndotreeToggle, desc = "Undo Tree" },
+	{ "<leader>w", proxy="<c-w>", group="window" },
+    -- { "<leader>w", group = "window" },
+    -- { "<leader>w+", "<C-w>+", desc = "Height +" },
+    -- { "<leader>w-", "<C-w>-", desc = "Height -" },
+    -- { "<leader>w<", "<C-w><lt>", desc = "Width -" },
+    -- { "<leader>w=", "<C-w>=", desc = "Balance" },
+    -- { "<leader>w>", "<C-w><gt>", desc = "Width +" },
+    -- { "<leader>w_", "<C-w>_", desc = "Height Max" },
+    -- { "<leader>wh", "<C-w>h", desc = "Window ←" },
+    -- { "<leader>wj", "<C-w>j", desc = "Window ↓" },
+    -- { "<leader>wk", "<C-w>k", desc = "Window ↑" },
+    -- { "<leader>wl", "<C-w>l", desc = "Window →" },
+    -- { "<leader>w|", "<C-w>|", desc = "Width Max" },
+    { "<leader>x", group = "misc" },
+    { "<leader>x/", vim.cmd.noh, desc = "Cancel Highlight" },
+})
+
+
+
+
+
+
+
 
 -- Shift lines
 vim.keymap.set("n", "<A-j>", ":m .+1<CR>", {desc = "Shift Line Down"})
@@ -334,8 +436,9 @@ vim.keymap.set("i", "<A-k>", "<C-o>:m .-2<CR>", {desc = "Shift Line Up"})
 vim.keymap.set("v", "<A-j>", ":m '>+1<CR>gv", {desc = "Shift Lines Down"})
 vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv", {desc = "Shift Lines Up"})
 
-
 vim.keymap.set("n", "<leader>?", function() vim.cmd.WhichKey("''") end, {desc = "List Keybinds"})
+
+--vim.keymap.set("i", "<D-.>", "", {})
 
 -- Keybindings that need to be registered after plugins load
 -- This function is called in [after/plugin/luna.lua]
@@ -353,11 +456,31 @@ function Luna.afterBinds()
 end
 
 
-wk.register(LeaderMap, {prefix = "<leader>"})
 
 
-
-
-
-
-
+require("dashboard").setup {
+	theme = "doom",
+	--preview = {
+	--	command = "catimg",
+	--	file_path = "~/luna-appr-export.png",
+	--	file_width = 40,
+	--	file_height = 21,
+	--},
+	config = {
+		header = {"mew"},
+		center = {
+			{
+				icon = '  ',
+				icon_hl = "Number",
+				group = "string",
+				desc = "Open File",
+				desc_hl = "String",
+				key = "o",
+				key_hl = "Type",
+				key_format = '  [%s]',
+				action = function() require("telescope.builtin").find_files() end,
+			},
+		},
+		footer = {},
+	},
+}

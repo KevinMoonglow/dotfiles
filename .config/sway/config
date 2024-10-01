@@ -1,0 +1,422 @@
+# Default config for sway
+#
+# Copy this to ~/.config/sway/config and edit it to your liking.
+#
+# Read `man 5 sway` for a complete reference.
+
+### Variables
+#
+# Logo key. Use Mod1 for Alt.
+set $mod Mod4
+# Home row direction keys, like vim
+set $left h
+set $down j
+set $up k
+set $right l
+# Your preferred terminal emulator
+set $term kitty
+set $browser firefox
+# Your preferred application launcher
+# Note: pass the final command to swaymsg so that the resulting window can be opened
+# on the original workspace that the command was run on.
+set $menu "rofi -modi drun,run -show drun | xargs swaymsg exec --"
+
+font pango:Terminus Bold 15
+
+### Output configuration
+
+output * bg /mnt/share/images/wallpaper/widescreen/16:9/_segatasam__tails_wallpaper_by_segatasam-d5f0r8s.png fill
+
+output DP-1 mode 2560x1440@144Hz pos 0 480 adaptive_sync on
+output DP-2 mode 1920x1080@144Hz pos 2560 0 adaptive_sync on transform 270
+
+#
+# Example configuration:
+#
+#   output HDMI-A-1 resolution 1920x1080 position 1920,0
+#
+# You can get the names of your outputs by running: swaymsg -t get_outputs
+
+### Idle configuration
+#
+# Example configuration:
+#
+# exec swayidle -w \
+#          timeout 300 'swaylock -f -c 000000' \
+#          timeout 600 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \
+#          before-sleep 'swaylock -f -c 000000'
+#
+# This will lock your screen after 300 seconds of inactivity, then turn off
+# your displays after another 300 seconds, and turn your screens back on when
+# resumed. It will also lock your screen before your computer goes to sleep.
+
+### Input configuration
+#
+# Example configuration:
+#
+#   input "2:14:SynPS/2_Synaptics_TouchPad" {
+#       dwt enabled
+#       tap enabled
+#       natural_scroll enabled
+#       middle_emulation enabled
+#   }
+#
+# You can get the names of your inputs by running: swaymsg -t get_inputs
+# Read `man 5 sway-input` for more information about this section.
+
+input "type:keyboard" {
+	xkb_options caps:ctrl_modifier,compose:ralt
+}
+
+
+
+#class                  border     bg         text     indicator  child_border
+client.focused          #af00afaa  #CA7DC788  #ffffff  #ffffff    #ffaaddcc
+client.focused_inactive #0000afaa  #0000af88  #ffffff  #ffffff    #000000aa
+client.unfocused        #000000dd  #00000055  #ffffff  #ffffff    #000000aa
+client.urgent           #aa4444aa  #000000aa  #ffffff  #ffffff    #aa4444aa
+client.placeholder      #000000aa  #ffaaddaa  #ffffff  #000000    #ffaaddaa
+
+default_border pixel 2
+default_floating_border pixel 2
+gaps inner 12
+smart_borders on
+smart_gaps off
+focus_follows_mouse no
+#hide_edge_borders smart
+
+popup_during_fullscreen smart
+
+
+set $vol_sound /usr/share/sounds/freedesktop/stereo/audio-volume-change.oga
+
+
+set $mode_music Music Control
+set $mode_gaps Gaps: %{U#FFF}i%{U-}nner %{U#FFF}o%{U-}uter
+set $mode_gaps_inner inner gaps
+set $mode_gaps_outer outer gaps
+
+
+### Key bindings
+#
+# Basics:
+#
+# Start a terminal
+bindsym $mod+Return exec $term
+
+# Kill focused window
+bindsym $mod+w kill
+
+# Start your launcher
+bindsym $mod+r exec $menu
+
+# Drag floating windows by holding down $mod and left mouse button.
+# Resize them with right mouse button + $mod.
+# Despite the name, also works for non-floating windows.
+# Change normal to inverse to use left mouse button for resizing and right
+# mouse button for dragging.
+floating_modifier $mod normal
+
+# Reload the configuration file
+bindsym $mod+Ctrl+r reload
+bindsym $mod+Shift+Ctrl+r restart
+
+# Moving around:
+#
+# Move your focus around
+bindsym $mod+$left focus left
+bindsym $mod+$down focus down
+bindsym $mod+$up focus up
+bindsym $mod+$right focus right
+# Or use $mod+[up|down|left|right]
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+
+# Move the focused window with the same, but add Shift
+bindsym $mod+Shift+$left move left
+bindsym $mod+Shift+$down move down
+bindsym $mod+Shift+$up move up
+bindsym $mod+Shift+$right move right
+# Ditto, with arrow keys
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+#
+# Workspaces:
+#
+
+set $ws1 "1:₁"
+set $ws2 "2:₂"
+set $ws3 "3:₃"
+set $ws4 "4:₄"
+set $ws5 "5:₅"
+set $ws6 "6:₆"
+set $ws7 "7:₇"
+set $ws8 "8:₈"
+set $ws9 "9:₉"
+set $ws10 "10:₁₀"
+
+workspace $ws3 output nonprimary
+
+# Switch to workspace
+bindsym $mod+1 workspace number $ws1
+bindsym $mod+2 workspace number $ws2
+bindsym $mod+3 workspace number $ws3
+bindsym $mod+4 workspace number $ws4
+bindsym $mod+5 workspace number $ws5
+bindsym $mod+6 workspace number $ws6
+bindsym $mod+7 workspace number $ws7
+bindsym $mod+8 workspace number $ws8
+bindsym $mod+9 workspace number $ws9
+bindsym $mod+0 workspace number $ws10
+# Move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace number $ws1
+bindsym $mod+Shift+2 move container to workspace number $ws2
+bindsym $mod+Shift+3 move container to workspace number $ws3
+bindsym $mod+Shift+4 move container to workspace number $ws4
+bindsym $mod+Shift+5 move container to workspace number $ws5
+bindsym $mod+Shift+6 move container to workspace number $ws6
+bindsym $mod+Shift+7 move container to workspace number $ws7
+bindsym $mod+Shift+8 move container to workspace number $ws8
+bindsym $mod+Shift+9 move container to workspace number $ws9
+bindsym $mod+Shift+0 move container to workspace number $ws10
+
+bindsym $mod+equal workspace next
+bindsym $mod+minus workspace prev
+
+bindsym $mod+Shift+Ctrl+o move workspace to output right
+bindsym $mod+Shift+o move to output right; focus output right
+bindsym $mod+o focus output right
+
+set $mode_control *WM*
+bindsym $mod+d mode "$mode_control"
+
+mode "$mode_control" {
+	# split in horizontal orientation
+	bindsym s split v, mode "default"
+
+	# split in vertical orientation
+	bindsym v split h, mode "default"
+
+	# Exit sway (logs you out of your Wayland session)
+	bindsym $mod+Shift+Ctrl+q exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
+
+	bindsym w exec "rofi -modi window -show window", mode "default"
+	bindsym b border toggle 3
+	bindsym g mode "$mode_gaps"
+	bindsym m mode "$mode_music"
+	bindsym r mode "resize"
+	bindsym grave exec i3-input -F '[con_mark="%s"] focus ' -l 1 -P "Quick Jump: " -f "pango:Terminus Bold 16", mode "default"
+	bindsym Shift+quotedbl exec i3-input -F 'mark %s' -l 1 -P "Quick Mark: " -f "pango:Terminus Bold 16", mode "default"
+	bindsym z sticky toggle, mode default
+
+	bindsym Escape mode "default"
+	bindsym o open, mode "default"
+
+}
+
+set $mode_exec Exec:%{-u} %{U#FFF}%{+u}c%{-u}onfig | %{+u}e%{-u}macs | %{+u}w%{-u} firefox
+bindsym $mod+x mode "$mode_exec"
+
+mode "$mode_exec" {
+	bindsym Escape mode "default"
+
+	bindsym c exec nvim-qt ~/.config/i3/config, mode "default"
+	bindsym t exec $terminal, mode "default"
+	bindsym w exec $browser, mode "default"
+	bindsym grave exec tilda, mode "default"
+	bindsym e exec emacsclient -c -a 'emacs', mode "default"
+	bindsym v exec nvim-qt, mode "default"
+
+}
+
+set $mode_screenshot *SCREENSHOT*
+bindsym Print mode "$mode_screenshot"
+mode "$mode_screenshot" {
+	bindsym Escape mode "default"
+}
+
+#
+# Layout stuff:
+#
+    # You can "split" the current object of your focus with
+    # $mod+b or $mod+v, for horizontal and vertical splits
+    # respectively.
+
+bindsym Mod1+Tab focus next
+bindsym Mod1+Shift+Tab focus prev
+
+
+# enter fullscreen mode for the focused container
+bindsym $mod+f fullscreen toggle
+bindsym $mod+F11 fullscreen toggle
+
+# change container layout (stacked, tabbed, toggle split)
+bindsym $mod+s layout stacking
+bindsym $mod+t layout tabbed
+bindsym $mod+e layout toggle split
+bindsym $mod+Shift+e split toggle
+bindsym $mod+space layout toggle all
+bindsym $mod+Shift+Return layout toggle stacking splitv
+
+# toggle tiling / floating
+bindsym $mod+Shift+f floating toggle
+
+# change focus between tiling / floating windows
+bindsym $mod+Tab focus mode_toggle
+
+# focus the parent container
+bindsym $mod+p focus parent
+
+# focus the child container
+bindsym $mod+Shift+p focus child
+
+bindsym $mod+i [urgent=oldest] focus
+
+
+#
+# Scratchpad:
+#
+    # Sway has a "scratchpad", which is a bag of holding for windows.
+    # You can send windows there and get them back later.
+
+bindsym $mod+backslash scratchpad show
+bindsym $mod+Shift+backslash move scratchpad
+
+#
+# Resizing containers:
+#
+mode "resize" {
+    # left will shrink the containers width
+    # right will grow the containers width
+    # up will shrink the containers height
+    # down will grow the containers height
+    bindsym $left resize shrink width 10px
+    bindsym $down resize grow height 10px
+    bindsym $up resize shrink height 10px
+    bindsym $right resize grow width 10px
+
+    # Ditto, with arrow keys
+    bindsym Left resize shrink width 10px
+    bindsym Down resize grow height 10px
+    bindsym Up resize shrink height 10px
+    bindsym Right resize grow width 10px
+
+    # Return to default mode
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+bindsym $mod+Ctrl+h resize grow left 3 px or 3 ppt, resize shrink right 3 px or 3 ppt
+bindsym $mod+Ctrl+j resize grow down 3 px or 3 ppt, resize shrink up 3 px or 3 ppt
+bindsym $mod+Ctrl+k resize grow up 3 px or 3 ppt, resize shrink down 3 px or 3 ppt
+bindsym $mod+Ctrl+l resize grow right 3 px or 3 ppt, resize shrink left 3 px or 3 ppt
+#
+# Status Bar:
+#
+# Read `man 5 sway-bar` for more information about this section.
+#bar {
+#    position top
+# 
+#    # When the status_command prints a new line to stdout, swaybar updates.
+#    # The default just shows the current date and time.
+#    status_command while date +'%Y-%m-%d %I:%M:%S %p'; do sleep 1; done
+# 
+#    colors {
+#        statusline #ffffff
+#        background #000000
+#        inactive_workspace #323232 #323232 #5c5c5c
+#    } 
+#} 
+
+
+for_window [class="Ristretto"] floating enable
+for_window [class="feh"] floating enable
+for_window [class="Sxiv"] floating enable
+for_window [class="Nsxiv"] floating enable
+for_window [class="love"] floating enable
+for_window [instance="Godot_Engine" class="^(?!Godot).*"] floating enable
+for_window [instance="Godot_Editor" class="Godot"] floating disable
+for_window [instance="Godot_Editor" class="Godot" window_type="utility"] floating enable
+for_window [class="steam" title="^notificationtoasts_"] floating enable
+for_window [class="Pavucontrol"] floating enable
+no_focus [class="steam" title="^notificationtoasts_"]
+
+for_window [all] title_window_icon on
+
+assign [class="firefox"] $ws4
+assign [class="Brave-browser"] $ws4
+assign [class="discord"] $ws3
+assign [class="vesktop"] $ws3
+assign [class="Moonlight"] $ws5
+assign [class="steam"] $ws5
+
+
+mode "$mode_gaps" {
+	bindsym Escape mode "default"
+
+	bindsym i mode "$mode_gaps_inner"
+	bindsym o mode "$mode_gaps_outer"
+}
+mode "$mode_gaps_inner" {
+	bindsym Escape mode "default"
+
+	bindsym plus gaps inner current plus 6
+	bindsym minus gaps inner current minus 6
+	bindsym 0 gaps inner current set 0
+	bindsym space gaps inner current set 12
+
+	bindsym Shift+plus gaps inner all plus 6
+	bindsym Shift+minus gaps inner all minus 6
+	bindsym Shift+0 gaps inner all set 0
+	bindsym Shift+space gaps inner all set 12
+
+	bindsym o mode "$mode_gaps_outer"
+}
+mode "$mode_gaps_outer" {
+	bindsym Escape mode "default"
+
+	bindsym plus gaps outer current plus 6
+	bindsym minus gaps outer current minus 6
+	bindsym 0 gaps outer current set 0
+	bindsym space gaps outer current set 0
+
+	bindsym Shift+plus gaps outer all plus 6
+	bindsym Shift+minus gaps outer all minus 6
+	bindsym Shift+0 gaps outer all set 0
+	bindsym Shift+space gaps outer all set 0
+
+	bindsym i mode "$mode_gaps_inner"
+}
+
+
+mode "$mode_music" {
+	bindsym Escape mode "default"
+
+	bindsym p exec --no-startup-id ~/.config/bin/mpc_find_in_playlist, mode "default"
+
+	bindsym n exec $terminal -e ncmpcpp, mode "default"
+
+	bindsym XF86AudioRaiseVolume exec --no-startup-id mpc volume +2 && play $vol_sound
+	bindsym XF86AudioLowerVolume exec --no-startup-id mpc volume -2 && play $vol_sound
+	bindsym --whole-window button4 exec --no-startup-id mpc volume +2 && play $vol_sound
+	bindsym --whole-window button5 exec --no-startup-id mpc volume -2 && play $vol_sound
+}
+
+bindsym --whole-window $mod+button4 exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +2% && play $vol_sound
+bindsym --whole-window $mod+button5 exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -2% && play $vol_sound
+
+bindsym XF86AudioPlay exec --no-startup-id mpc toggle
+bindsym XF86AudioNext exec --no-startup-id mpc next
+bindsym XF86AudioPrev exec --no-startup-id mpc prev
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
+
+bar {
+	swaybar_command waybar
+}
+
+
+include /etc/sway/config.d/*

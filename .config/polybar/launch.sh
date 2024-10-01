@@ -23,11 +23,11 @@ if [[ "$(hostname)" == "wolf" ]]; then
 	MONITOR=HDMI-0 polybar side 2>&1 | tee -a /tmp/polybar2.log & disown
 elif [[ "$(hostname)" == "fennec" ]]; then
 	if [[ -z "$WAYLAND_DISPLAY" ]]; then
-		MONITOR=HDMI-0 polybar $lbar 2>&1 | tee -a /tmp/polybar1.log & disown
-		MONITOR=DP-0 polybar $rbar 2>&1 | tee -a /tmp/polybar2.log & disown
+		MONITOR=DP-0 polybar $lbar 2>&1 | tee -a /tmp/polybar1.log & disown
+		MONITOR=DP-2 polybar $rbar 2>&1 | tee -a /tmp/polybar2.log & disown
 	else
-		MONITOR=HDMI-A-1 polybar $lbar 2>&1 | tee -a /tmp/polybar1.log & disown
-		MONITOR=DP-1 polybar $rbar 2>&1 | tee -a /tmp/polybar2.log & disown
+		MONITOR=DP-1 polybar $lbar 2>&1 | tee -a /tmp/polybar1.log & disown
+		MONITOR=DP-3 polybar $rbar 2>&1 | tee -a /tmp/polybar2.log & disown
 	fi
 fi
 
