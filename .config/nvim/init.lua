@@ -1,5 +1,3 @@
-
-
 --============================================================================
 --======== Base Vim Options===================================================
 vim.g.mapleader = " "
@@ -134,6 +132,7 @@ Plug 'Yggdroot/indentLine'
 Plug 'nvimdev/dashboard-nvim'
 
 Plug 'fladson/vim-kitty'
+Plug '2kabhishek/nerdy.nvim'
 
 vim.call("plug#end")
 
@@ -444,12 +443,14 @@ vim.keymap.set("n", "<leader>?", function() vim.cmd.WhichKey("''") end, {desc = 
 -- This function is called in [after/plugin/luna.lua]
 function Luna.afterBinds()
 	local tele = require("telescope.builtin")
+	local nerdy = require('telescope').extensions.nerdy
 
 	vim.keymap.set("n", "<leader>.", tele.find_files, {desc = "Find File"})
 	vim.keymap.set("n", "<leader>`", tele.marks, {desc = "List Marks"})
 	vim.keymap.set("n", "<leader>/", tele.live_grep, {desc = "Grep Files"})
 	vim.keymap.set("n", "<leader>bb", tele.buffers, {desc = "Select Buffer"})
 	vim.keymap.set("n", "<leader>gf", tele.git_files, {desc = "Find files in repo"})
+	vim.keymap.set("n", "<leader>n", nerdy.nerdy, {desc = "Select a nerd font icon."})
 	--vim.keymap.set("n", "<leader>p/", function()
 	--	tele.grep_string({ search = vim.fn.input("Grep> ") })
 	--end)

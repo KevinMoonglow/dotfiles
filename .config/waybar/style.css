@@ -58,7 +58,7 @@ button:hover {
 }
 
 #workspaces {
-	border-radius: 32px;
+	border-radius: 16px;
 	padding-right: 12px;
     background-color: #000000;
 }
@@ -95,7 +95,6 @@ button:hover {
 #workspaces button.urgent {
     background-color: #aa4444;
 }
-
 
 #clock,
 #battery,
@@ -137,6 +136,10 @@ button:hover {
 #window label {
 	border-bottom: 3px solid #ffffff;
 }
+window#waybar.empty #window {
+    background: transparent;
+}
+
 
 
 /* If workspaces is the leftmost module, omit left margin */
