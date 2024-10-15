@@ -31,4 +31,4 @@ else
     set -f vicon ""
 end
 
-notify-send -h string:x-canonical-private-synchronous:volume "$vicon Volume ($new_vol%)" -i " " -h int:value:$new_vol
+notify-send -h string:x-canonical-private-synchronous:volume "$vicon Volume ($new_vol%)" -h int:value:$new_vol
