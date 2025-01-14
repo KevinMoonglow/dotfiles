@@ -1,0 +1,9 @@
+#!/usr/bin/env fish
+brightnessctl set $argv[1]
+
+set -f max (brightnessctl max)
+set -f cur (brightnessctl get)
+set -f new_brightness (math $cur / $max \* 100)
+set -f icon "󰳲"
+
+notify-send -h string:x-canonical-private-synchronous:brightness "$icon Brightness ($new_brightness%)" -h int:value:$new_brightness
