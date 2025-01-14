@@ -1,0 +1,9 @@
+@import "dmenu"
+
+* {
+	font: "Terminus Bold 16";
+}
+
+prompt {
+	margin: 0 20px 0 0;
+}

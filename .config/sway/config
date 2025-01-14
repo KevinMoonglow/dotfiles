@@ -218,6 +218,12 @@ mode "$mode_control" {
 
 }
 
+set $mode_escape *Escape*
+bindsym $mod+Escape mode $mode_escape
+mode $mode_escape {
+	bindsym $mod+Escape mode "default"
+}
+
 set $mode_exec Exec:%{-u} %{U#FFF}%{+u}c%{-u}onfig | %{+u}e%{-u}macs | %{+u}w%{-u} firefox
 bindsym $mod+x mode "$mode_exec"
 
@@ -285,6 +291,8 @@ bindsym $mod+i [urgent=oldest] focus
 
 bindsym $mod+backslash scratchpad show
 bindsym $mod+Shift+backslash move scratchpad
+bindsym $mod+grave scratchpad show
+bindsym $mod+Shift+grave move scratchpad
 
 #
 # Resizing containers:

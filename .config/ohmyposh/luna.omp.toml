@@ -63,7 +63,7 @@ version = 3
       threshold = 0.0
 
   [[blocks.segments]]
-    template = '<transparent> </> {{ reason .Code }} '
+    template = ' {{ reason .Code }} '
     foreground = '#ffffff'
     powerline_symbol = ''
     background = '#910000'
@@ -92,7 +92,7 @@ version = 3
       [blocks.segments.properties.mapped_shell_names]
         bash = '󱆃 '
         fish = '󰈺 '
-        zsh = '%_'
+        zsh = '󰰷 '
 
   [[blocks.segments]]
     leading_diamond = ''

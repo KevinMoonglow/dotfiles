@@ -1,7 +1,11 @@
 #!/usr/bin/bash
 # Script taken from https://www.reddit.com/r/kde/comments/gim0hx/hotkey_to_toggle_muteunmute_active_application/
 
-window=$(xdotool getactivewindow getwindowpid)     #get active window pid 
+if [ "$DESKTOP_SESSION" == "hyprland" ]; then
+	window=$(hyprctl activewindow | grep pid | awk '{print $2}')
+else
+	window=$(xdotool getactivewindow getwindowpid)     #get active window pid 
+fi
 
 tempvar=$(pactl list sink-inputs |     #temp variable with all items producing sound in format "Sink_Input_numr" "pid" "Sink_Input_num" "pid" etc.
  grep 'Sink Input #\|application\.process\.id =' |

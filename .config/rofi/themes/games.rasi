@@ -1,0 +1,38 @@
+@import "games-default"
+
+* {
+	background: #000000;
+	background-transparent: #00000088;
+	innerbg: #000000a0;
+	primary: #ffaafc;
+	important: #ffaafc;
+}
+
+window {
+	fullscreen: true;
+}
+
+mainbox {
+	children: [inner-box];
+}
+
+inner-box { 
+	margin: 10px 10px;
+	children: [prompt, inputbar-box, listview];
+	border: 1px solid;
+	border-radius: 20px;
+	border-color: @primary;
+	background-color: @innerbg;
+}
+
+
+textbox-prompt {
+	margin: 0px -10px 0px 0px;
+}
+
+
+textbox-prompt {
+    str:                            " ";
+    font:                           "Inconsolata Nerd Font Mono 24";
+    padding:                        0px 5px 0px 5px;
+}

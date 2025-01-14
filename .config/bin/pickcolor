@@ -1,0 +1,10 @@
+#!/usr/bin/bash
+
+color=$(hyprpicker)
+notify-send -h "string:hlcolor:$color" -h "int:value:100" "Color picked: $color"
+if [ "$XDG_SESSION_TYPE" = "wayland" ]
+then
+	wl-copy "$color"
+else
+	echo -n "$color" | xclip -selection "clipboard"
+fi

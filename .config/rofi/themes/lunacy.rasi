@@ -1,0 +1,22 @@
+@import "DarkBlue"
+
+* {
+	foreground: #60BDEC;
+	background: #000000cc;
+	border-color: #ffaafc;
+	selected-normal-background: #29315A;
+	selected-normal-foreground: #ffffff;
+	active-foreground: #ffaafc;
+	selected-active-foreground: #ffaafc;
+	selected-active-background: #29315A;
+	prompt-color: #ffffff;
+	separatorcolor: #ffaafc;
+}
+
+window {
+	width: 40em;
+}
+
+prompt {
+	text-color: @prompt-color;
+}
