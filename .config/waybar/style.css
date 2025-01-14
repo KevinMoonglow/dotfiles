@@ -276,6 +276,12 @@ label:focus {
     border-bottom: 3px solid #ecf0f1;
 }
 
+#custom-notif {
+	padding: 0 12px;
+	border-bottom: 3px solid #76d1ff;
+	color: #75d1ff;
+}
+
 widget {
 }
 

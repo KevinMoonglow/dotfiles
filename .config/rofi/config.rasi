@@ -152,11 +152,12 @@ configuration {
 //@theme "/usr/share/rofi/themes/DarkBlue.rasi"
 //@theme "/usr/share/rofi/themes/Adapta-Nokto.rasi"
 //@theme "/usr/share/rofi/themes/gruvbox-dark-hard.rasi"
-@theme "/usr/share/rofi/themes/DarkBlue.rasi"
+//@theme "/usr/share/rofi/themes/DarkBlue.rasi"
+@theme "lunacy"
 
 element-icon {
-	size: 25px;
-	margin: 0px 10px 0px 5px;
+	size: 24px;
+	margin: -2px 10px 0px 5px;
 }
 element {
 }
