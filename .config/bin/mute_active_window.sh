@@ -1,28 +1,48 @@
-#!/usr/bin/bash
-# Script taken from https://www.reddit.com/r/kde/comments/gim0hx/hotkey_to_toggle_muteunmute_active_application/
+#!/bin/bash
 
+# Get the PID of the process associated with that window
 if [ "$DESKTOP_SESSION" == "hyprland" ]; then
-	window=$(hyprctl activewindow | grep pid | awk '{print $2}')
+	focused_pid=$(hyprctl activewindow -j | jq .pid)
+elif [ "$DESKTOP_SESSION" == "niri" ]; then
+	focused_pid=$(niri msg -j focused-window | jq .pid)
 else
-	window=$(xdotool getactivewindow getwindowpid)     #get active window pid 
+	focused_pid=$(xdotool getactivewindow getwindowpid)
 fi
 
-tempvar=$(pactl list sink-inputs |     #temp variable with all items producing sound in format "Sink_Input_numr" "pid" "Sink_Input_num" "pid" etc.
- grep 'Sink Input #\|application\.process\.id =' |
- while read -r line ; do
- echo $line | grep -oP 'Sink Input #\K[^$]+'
- echo $line | grep -oP 'application\.process\.id = "\K[^"]+'
- done |
- tr '\n' ' ')
 
-array=($tempvar)     #array containing all items in $tempvar
+# Find the sink input (audio stream) that matches the focused PID
+sink_input=($(pactl list sink-inputs | awk -v pid="$focused_pid" '
+  $1 == "Sink" && $2 == "Input" {
+    input_index = $3
+  }
+  $1 == "application.process.id" {
+    if ($3 == "\""pid"\"") {
+		sub(/^#/, "", input_index)
+		print input_index
+    }
+  }
+'))
 
-for (( i = 1; i < ${#array[*]}; i+=2 )); do     #for all array ellements
-        if [[ $window == ${array[$i]} ]]; then     #compare active window pid and programs' pid that produce sound
-                actual_array_number=$(($i-1))     #because of the nature of the array subtract 1 to find Sink_Input_number
-                pactl set-sink-input-mute ${array[$actual_array_number]} toggle     #toggle audio for that app on or off
+if [ -z "$sink_input" ]; then
+  echo "No audio stream found for focused window (PID: $focused_pid)."
+  exit 1
+fi
 
-				#echo $window , ${array[actual_array_number]}
-                #break     #don't continue the loop just exit
-        fi
-done
+# Get current mute status
+current_mute=$(pactl list sink-inputs | awk -v id="${sink_input[0]}" '
+  $1 == "Sink" && $2 == "Input" && $3 == "#"id {
+    found = id
+  }
+  found && $1 == "Mute:" {
+    print $2
+    exit
+  }
+')
+
+# Toggle mute
+if [ "$current_mute" == "yes" ]; then
+  printf "%s\n" ${sink_input[@]} | xargs -I{} pactl set-sink-input-mute {} 0
+else
+  printf "%s\n" ${sink_input[@]} | xargs -I{} pactl set-sink-input-mute {} 1
+fi
+

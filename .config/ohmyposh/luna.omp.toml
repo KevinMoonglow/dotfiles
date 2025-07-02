@@ -1,4 +1,5 @@
-console_title_template = '{{if .Root}} ⚡ {{end}}{{.Folder | replace "~" "🏚" }} @ {{.HostName}}'
+#console_title_template = '{{if .Root}} ⚡ {{end}}{{.Folder | replace "~" "🏚" }} @ {{.HostName}}'
+console_title_template = '{{if .Root}} ⚡ {{end}}{{if eq .PWD "~"}} {{else}}  {{ .Folder }}{{end}}{{if .Env.SSH_TTY}} @ {{.HostName}}{{end}}'
 version = 3
 
 [transient_prompt]

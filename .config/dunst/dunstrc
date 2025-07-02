@@ -120,7 +120,7 @@
 
     ### Text ###
 
-    font = Terminus Bold 16
+    font = Terminus (TTF) Bold 18
 
     # The spacing between lines.  If the height is smaller than the
     # font height, it will get raised to the font height.

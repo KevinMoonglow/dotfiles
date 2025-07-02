@@ -1,0 +1,37 @@
+#!/usr/bin/bash
+# Script taken from https://www.reddit.com/r/kde/comments/gim0hx/hotkey_to_toggle_muteunmute_active_application/
+
+if [ "$DESKTOP_SESSION" == "hyprland" ]; then
+	window=$(hyprctl activewindow -j | jq .pid)
+else
+	window=$(xdotool getactivewindow getwindowpid)     #get active window pid 
+fi
+
+count=0
+tempvar=$(pactl list sink-inputs |     #temp variable with all items producing sound in format "Sink_Input_numr" "pid" "Sink_Input_num" "pid" etc.
+ grep 'Sink Input #\|application\.process\.id =' |
+ while read -r line ; do
+  if echo $line | grep -Pq 'Sink Input #\K[^$]+' && [ $((count % 2)) -ne 0 ]; then
+	  echo "none"
+  fi
+  echo $line | grep -oP 'Sink Input #\K[^$]+' && ((count+=1))
+  echo $line | grep -oP 'application\.process\.id = "\K[^"]+' && ((count+=1))
+ done |
+ tr '\n' ' ')
+
+array=($tempvar)     #array containing all items in $tempvar
+echo $tempvar
+echo -- ---------------
+
+
+for (( i = 1; i < ${#array[*]}; i+=2 )); do     #for all array ellements
+	echo $window
+	echo ${array[$i]}
+        if [[ $window == ${array[$i]} ]]; then     #compare active window pid and programs' pid that produce sound
+                actual_array_number=$(($i-1))     #because of the nature of the array subtract 1 to find Sink_Input_number
+                pactl set-sink-input-mute ${array[$actual_array_number]} toggle     #toggle audio for that app on or off
+
+				echo $window , ${array[actual_array_number]}
+                #break     #don't continue the loop just exit
+        fi
+done

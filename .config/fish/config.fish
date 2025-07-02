@@ -1,7 +1,14 @@
 function fish_greeting
     type -q pokemon-colorscripts; and pokemon-colorscripts -r
 end
-
+function fish_title
+    if set -q argv[1]
+        echo -- "  "(string sub -l 20 -- $argv[1])
+    else
+        set -l command (status current-command)
+        echo -- "  "(string sub -l 20 -- $command)
+    end
+end
 
 if status is-interactive
     # Commands to run in interactive sessions can go here

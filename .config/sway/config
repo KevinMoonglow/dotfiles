@@ -27,8 +27,8 @@ font pango:Terminus Bold 15
 
 output * bg /mnt/share/images/wallpaper/widescreen/16:9/_segatasam__tails_wallpaper_by_segatasam-d5f0r8s.png fill
 
-output DP-1 mode 2560x1440@144Hz pos 0 480 adaptive_sync on
-output DP-2 mode 1920x1080@144Hz pos 2560 0 adaptive_sync on transform 270
+output DP-1 mode 2560x1440@144Hz pos 0 480 adaptive_sync off
+output DP-2 mode 1920x1080@144Hz pos 2560 0 adaptive_sync off transform 270
 
 #
 # Example configuration:
@@ -239,6 +239,14 @@ mode "$mode_exec" {
 
 }
 
+# Emojipicker
+bindsym $mod+period exec rofimoji
+bindsym $mod+ctrl+period exec rofimoji --typer xdotool
+
+# Color picker
+bindsym $mod+c exec pickcolor
+
+
 set $mode_screenshot *SCREENSHOT*
 bindsym Print mode "$mode_screenshot"
 mode "$mode_screenshot" {
@@ -423,7 +431,7 @@ bindsym XF86AudioPrev exec --no-startup-id mpc prev
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
 
 bar {
-	swaybar_command waybar
+	swaybar_command waybar -c ~/.config/waybar/config-fennec
 }
 
 

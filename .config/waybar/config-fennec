@@ -8,7 +8,7 @@
     "spacing": 4, // Gaps between modules (4px)
 	"output": ["DP-1"],
     // Choose the order of the modules
-    "modules-left": ["hyprland/workspaces", "sway/workspaces", "hyprland/submap", "sway/mode", "hyprland/window", "sway/window"],
+    "modules-left": ["hyprland/workspaces", "sway/workspaces", "niri/workspaces", "hyprland/submap", "sway/mode", "hyprland/window", "sway/window", "niri/window"],
     "modules-center": [],
     "modules-right": ["mpd", "idle_inhibitor", "pulseaudio", "memory", "clock", "tray"],
     "sway/workspaces": {
@@ -38,6 +38,19 @@
              "default": ""
 		},
 	},
+	"niri/workspaces": {
+		"format": "{icon}<sub>{index}</sub>",
+		"format-icons": {
+			"home": "",
+			"dev": "",
+			"chat": "",
+			"browser": "󰈹",
+			"art": "󰏘",
+			"gaming": "󰯉",
+			"scratch": "",
+			"default": "",
+		}
+	},
 
 	"hyprland/workspaces#icons": {
 		"format": "{windows}",
@@ -51,6 +64,16 @@
 	},
 
 	"hyprland/window": {
+		"format": "{}",
+		"rewrite": {
+			"(.*) — Mozilla Firefox$": "  $1",
+			"^Mozilla Firefox$": " ",
+			"^Discord \\| (.*)": "󰙯  $1",
+			"^• Discord \\| (.*)": "󰙯  • $1",
+			"^\\(([0-9]+)\\) Discord \\| (.*)": "󰙯  ($1) $2"
+		},
+	},
+	"niri/window": {
 		"format": "{}",
 		"rewrite": {
 			"(.*) — Mozilla Firefox$": "  $1",
@@ -109,7 +132,20 @@
     "clock": {
         // "timezone": "America/New_York",
         "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
-        "format-alt": "{:%H:%M %Y-%m-%d}"
+        "format-alt": "{:%H:%M %Y-%m-%d}",
+        "calendar": {
+                    "mode"          : "month",
+                    "mode-mon-col"  : 3,
+                    "weeks-pos"     : "",
+                    "on-scroll"     : 1,
+                    "format": {
+                              "months":     "<span color='#ffead3'><b>{}</b></span>",
+                              "days":       "<span color='#ecc6d9'>{}</span>",
+                              "weeks":      "<span color='#99ffdd'><b>W{}</b></span>",
+                              "weekdays":   "<span color='#ffcc66'><b>{}</b></span>",
+                              "today":      "<span color='#ff6699'><b>{}</b></span>"
+                              }
+                    }
     },
     "cpu": {
         "format": "{usage}% ",
@@ -188,7 +224,7 @@
     "spacing": 4, // Gaps between modules (4px)
 	"output": "DP-2",
     // Choose the order of the modules
-    "modules-left": ["hyprland/workspaces", "sway/workspaces", "hyprland/submap", "sway/mode", "hyprland/window", "sway/window"],
+    "modules-left": ["hyprland/workspaces", "sway/workspaces", "niri/workspaces", "hyprland/submap", "sway/mode", "hyprland/window", "sway/window", "niri/workspace"],
     "modules-center": [],
     "modules-right": ["idle_inhibitor", "pulseaudio", "memory", "clock", "tray"],
     // Modules configuration
@@ -218,7 +254,30 @@
              "default": ""
 		}
 	},
+	"niri/workspaces": {
+		"format": "{icon}<sub>{index}</sub>",
+		"format-icons": {
+			"home": "",
+			"dev": "",
+			"chat": "",
+			"browser": "󰈹",
+			"art": "󰏘",
+			"gaming": "󰯉",
+			"scratch": "",
+			"default": ""
+		}
+	},
 	"hyprland/window": {
+		"format": "{}",
+		"rewrite": {
+			"(.*) — Mozilla Firefox$": "  $1",
+			"^Mozilla Firefox$": " ",
+			"^Discord \\| (.*)": "󰙯  $1",
+			"^• Discord \\| (.*)": "󰙯  • $1",
+			"^\\(([0-9]+)\\) Discord \\| (.*)": "󰙯  ($1) $2"
+		},
+	},
+	"niri/window": {
 		"format": "{}",
 		"rewrite": {
 			"(.*) — Mozilla Firefox$": "  $1",

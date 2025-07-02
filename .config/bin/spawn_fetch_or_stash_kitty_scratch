@@ -1,0 +1,40 @@
+#!/bin/bash
+
+SCRATCH_CLASS="kitty-scratch"
+SCRATCH_WORKSPACE="scratch"
+
+if [ "$DESKTOP_SESSION" == "niri" ]; then
+    active="$(niri msg -j focused-window | jq -r .app_id)"
+    workspace="$(niri msg -j workspaces | jq -r ".[] | select(.is_focused == "true").name")"
+
+	# Check if the special terminal is already focused
+    if [ "$active" == "$SCRATCH_CLASS" ]; then
+        id="$(niri msg -j focused-window | jq -r .id)"
+
+		# Send it away
+        niri msg action move-window-to-workspace --focus false "$SCRATCH_WORKSPACE"
+
+        if [ "$workspace" == "$SCRATCH_WORKSPACE" ]; then
+			# If we're on the special workspace, the hotkey can toggle floating state.
+            niri msg action toggle-window-floating
+        fi
+    else
+		# Terminal isn't focused
+
+        id="$(niri msg -j windows | jq "[.[] | select(.app_id == \"$SCRATCH_CLASS\")][0].id")"
+
+		# First check if it exists
+        if [[ ( -z "$id" ) || ( "$id" == "null" ) ]]; then
+			# Spawn a new terminal with a special identifier. WM configs should ensure it spawns in floating state.
+            (kitty --class "$SCRATCH_CLASS" &)
+        else
+			# It exists, but isn't focused, bring it to this monitor, on this workspace, set it floating, and give it focus.
+            monitor="$(niri msg -j focused-output | jq -r .name)"
+            niri msg action move-window-to-floating --id "$id"
+            #niri msg action move-window-to-workspace --window-id "$app_id" "$workspace"
+            niri msg action move-window-to-monitor --id "$id" "$monitor"
+            niri msg action center-window --id "$id"
+            niri msg action focus-window --id "$id"
+        fi
+    fi
+fi
