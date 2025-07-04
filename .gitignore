@@ -1,16 +1,1 @@
 *~
-.config/fontconfig/conf.d/09-Directories.conf
-.config/fontconfig/conf.d/78-Reject.conf
-.config/kitty/current-theme.conf
-.config/kitty/kitty.conf.bak
-.emacs.d/places
-.emacs.d/transient
-.emacs.d/projectile-bookmarks.eld
-.emacs.d/recentf
-<<<<<<< HEAD
-.config/hypr/conf/monitors.conf
-.config/ohmyposh/luna.omp.toml.bak
-=======
-.config/kitty/unicode-input-favorites.conf
->>>>>>> 03afa0638bd35a6416629e8625f9b980288fa02e
-.config/nvim-qt/window-geometry.conf
