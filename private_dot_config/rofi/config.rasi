@@ -1,7 +1,7 @@
 configuration {
 /*	modi: "window,run,ssh";*/
 /*	font: "Terminus (TTF) 18";*/
-	font: "JetBrainsMonoNL 16";
+/*	font: "JetBrainsMonoNL 16"; */
 /*	location: 0;*/
 /*	yoffset: 0;*/
 /*	xoffset: 0;*/
@@ -154,7 +154,7 @@ configuration {
 //@theme "/usr/share/rofi/themes/Adapta-Nokto.rasi"
 //@theme "/usr/share/rofi/themes/gruvbox-dark-hard.rasi"
 //@theme "/usr/share/rofi/themes/DarkBlue.rasi"
-@theme "lunacy"
+@theme "lunacy-dmenu-v"
 
 element-icon {
 	size: 24px;

@@ -134,6 +134,8 @@ Plug 'nvimdev/dashboard-nvim'
 Plug 'fladson/vim-kitty'
 Plug '2kabhishek/nerdy.nvim'
 
+Plug 'alker0/chezmoi.vim'
+
 vim.call("plug#end")
 
 
@@ -171,6 +173,11 @@ require('lspconfig').lua_ls.setup({
 		}
 	}
 })
+require('lspconfig').qmlls.setup {
+	cmd = {"qmlls6", "-E"}
+}
+
+
 lsp.setup()
 
 

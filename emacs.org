@@ -182,7 +182,7 @@ Sets the location for custom themes and loads up my personal theme file.
 ** Fonts
 #+begin_src emacs-lisp
   (set-face-attribute 'default nil
-                      :font "Terminus"
+                      :font "Terminus (TTF)"
                       :weight 'bold
                       :height 160)
 

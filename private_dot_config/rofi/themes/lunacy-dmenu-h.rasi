@@ -1,0 +1,41 @@
+@import "dmenu"
+
+* {
+	font: "Terminus (TTF) Bold 16";
+	bg: #000000cc;
+	bg2: #ffaafc44;
+	bg3: #29315Acc;
+
+	col1: #ffaafc;
+	col2: #29315A;
+	col3: #db35d6;
+
+	background-color: #00000000;
+}
+window {
+	border-color: @col1;
+	border: 0 0 1px 0;
+	padding: 0;
+	children: [ horibox, message ];
+	spacing: 0;
+}
+horibox {
+	background-color: @bg;
+}
+
+prompt {
+	background-color: @col2;
+	padding: 0 0.5em 0 0.5em;
+	margin: 0 0.2em 0 0;
+}
+element selected {
+	background-color: @bg2;
+}
+element-text {
+	vertical-align: 1.0;
+}
+message {
+	background-color: @bg3;
+	border: 1px 0 0 0;
+	border-color: @col1;
+}

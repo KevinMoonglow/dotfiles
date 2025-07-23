@@ -1,5 +1,4 @@
 // This config is in the KDL format: https://kdl.dev
-// vim: ft=kdl
 // "/-" comments out the following node.
 // Check the wiki for a full description of the configuration:
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Introduction
@@ -28,8 +27,8 @@ input {
     // Omitting settings disables them, or leaves them at their default values.
     touchpad {
         // off
-        tap
-        // dwt
+        //tap
+        dwt
         // dwtp
         // drag false
         // drag-lock
@@ -63,7 +62,7 @@ input {
 
     // Focus windows and outputs automatically when moving the mouse into them.
     // Setting max-scroll-amount="0%" makes it work only on windows already fully on screen.
-    focus-follows-mouse max-scroll-amount="20%"
+    focus-follows-mouse max-scroll-amount="0%"
 }
 
 {{ if eq .chezmoi.hostname "eevee" }}
@@ -264,6 +263,15 @@ layout {
         // top 64
         // bottom 64
     }
+	tab-indicator {
+		position "left"
+		width 10
+		gap 8
+		//place-within-column
+		length total-proportion=0.5
+		gaps-between-tabs 0
+		corner-radius 8
+	}
 }
 
 // Add lines like this to spawn processes at startup.
@@ -278,12 +286,13 @@ spawn-at-startup "swww-daemon"
 spawn-at-startup "copyq" "--start-server" "hide"
 spawn-at-startup "systemctl" "--user" "start" "plasma-polkit-agent"
 spawn-at-startup "hypridle"
+spawn-at-startup "sh" "-c" "pidof dunst || dunst"
 
 
 environment {
 	DISPLAY ":4"
 	LIBVA_DRIVER_NAME "nvidia"
-	XDG_SESSIOn_TYPE "wayland"
+	XDG_SESSION_TYPE "wayland"
 	GBM_BACKEND "nvidia-drm"
 	QT_QPA_PLATFORMTHEME "qt5ct"
 	QT_QPA_PLATFORM "wayland"
@@ -309,7 +318,7 @@ cursor {
 // You can change the path where screenshots are saved.
 // A ~ at the front will be expanded to the home directory.
 // The path is formatted with strftime(3) to give you the screenshot date and time.
-screenshot-path "/mnt/share/images/snap/%Y-%m-%d %H-%M-%S.%N%z.png"
+screenshot-path "/mnt/share/images/snap/%Y-%m-%d/%Y-%m-%d %H-%M-%S %z.png"
 
 // You can also set this to null to disable saving screenshots to disk.
 // screenshot-path null
@@ -426,8 +435,16 @@ window-rule {
 	match app-id="^swayimg$"
 	draw-border-with-background false
 }
+window-rule {
+	match app-id=r#"^org\.gnome\.Nautilus$"# title="^Open Files$"
+	open-floating true
+}
+window-rule {
+	match app-id="^com.mitchellh.ghostty$"
+	open-floating false
+}
 
-/-window-rule {
+window-rule {
 	match app-id="^steam_app_"
 	open-on-workspace "gaming"
 	default-column-width { proportion 1.0; }
@@ -488,13 +505,13 @@ binds {
 
     // Mod-Shift-/, which is usually the same as Mod-?,
     // shows a list of important hotkeys.
-    Mod+Slash { show-hotkey-overlay; }
+    Mod+Shift+Slash { show-hotkey-overlay; }
 
     // Suggested binds for running programs: terminal, app launcher, screen locker.
     Mod+Return hotkey-overlay-title="Open a Terminal: kitty" { spawn "kitty"; }
 	Mod+R hotkey-overlay-title="Application Launcher" { spawn "rofi" "-modi" "drun,run" "-show" "drun" "-terminal" "kitty"; }
 	Mod+G hotkey-overlay-title="Game Launcher" { spawn "rofi" "-modi" "games" "-show" "games" "-terminal" "kitty" "-theme" "games" "-display-games" "Games"; }
-    Super+Alt+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
+    Super+Alt+L hotkey-overlay-title="Lock the Screen: hyprlock" { spawn "hyprlock"; }
 
     // You can also use a shell. Do this if you need pipes, multiple commands, etc.
     // Note: the entire command goes as a single argument in the end.
@@ -564,8 +581,8 @@ binds {
 	Mod+Shift+Alt+O { move-column-to-monitor-next; }
 	Mod+Shift+Ctrl+O { move-workspace-to-monitor-next; }
 
-	Mod+Period { spawn "rofimoji"; }
-	Mod+Ctrl+Period { spawn "rofimoji" "--typer" "xdotool"; }
+	Mod+Period hotkey-overlay-title="Emoji Picker" { spawn "rofimoji"; }
+	Mod+Ctrl+Period hotkey-overlay-title="Emoji Picker (X)"{ spawn "rofimoji" "--typer" "xdotool"; }
 
 
     //Mod+Shift+Left  { focus-monitor-left; }
@@ -602,6 +619,7 @@ binds {
     Mod+Ctrl+Page_Up   { move-column-to-workspace-up; }
     Mod+Ctrl+U         { move-column-to-workspace-down; }
     Mod+Ctrl+I         { move-column-to-workspace-up; }
+	Mod+Semicolon      hotkey-overlay-title="Focus next urgent window" { spawn "qs" "-c" "bar" "NiriManager" "focusNextUrgent"; }
 
     // Alternatively, there are commands to move just a single window:
     // Mod+Ctrl+Page_Down { move-window-to-workspace-down; }
@@ -673,7 +691,7 @@ binds {
     Mod+Shift+9 { move-window-to-workspace 9; }
     Mod+Shift+0 { move-window-to-workspace 10; }
 	
-	Mod+Grave { spawn "~/.config/bin/spawn_fetch_or_stash_kitty_scratch"; }
+	Mod+Grave hotkey-overlay-title="Show/Hide persistant Kitty scratch terminal" { spawn "~/.config/bin/spawn_fetch_or_stash_kitty_scratch"; }
 
     // Alternatively, there are commands to move just a single window:
     // Mod+Ctrl+1 { move-window-to-workspace 1; }
@@ -700,10 +718,11 @@ binds {
 
     // Expand the focused column to space not taken up by other fully visible columns.
     // Makes the column "fill the rest of the space".
-    ///Mod+Ctrl+F { expand-column-to-available-width; }
+    Mod+Ctrl+F { expand-column-to-available-width; }
 
     Mod+C { center-column; }
-	Mod+Shift+C { spawn "~/.config/bin/pickcolor"; }
+	Mod+Shift+C { center-visible-columns; }
+	Mod+P hotkey-overlay-title="Color Picker (Hex value to Clipboard)" { spawn "~/.config/bin/pickcolor"; }
 
     // Center all fully visible columns on screen.
     Mod+Ctrl+C { center-visible-columns; }
@@ -724,8 +743,8 @@ binds {
     Mod+Ctrl+J { set-window-height "+10%"; }
 
     // Move the focused window between the floating and the tiling layout.
-    Mod+Shift+Backslash { toggle-window-floating; }
-    Mod+Backslash { switch-focus-between-floating-and-tiling; }
+    Mod+Shift+Q { toggle-window-floating; }
+    Mod+Q { switch-focus-between-floating-and-tiling; }
 
     // Toggle tabbed column display mode.
     // Windows in this column will appear as vertical tabs,
@@ -744,7 +763,7 @@ binds {
     Ctrl+Print { screenshot-screen; }
     Alt+Print { screenshot-window; }
 
-	Mod+V { spawn "copyq" "menu"; }
+	Mod+V hotkey-overlay-title="Clipboard History" { spawn "copyq" "menu"; }
 
 
     // Applications such as remote-desktop clients and software KVM switches may
@@ -767,4 +786,5 @@ binds {
 
 debug {
 	//wait-for-frame-completion-before-queueing
+	wait-for-frame-completion-in-pipewire
 }

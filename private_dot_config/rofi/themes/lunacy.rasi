@@ -1,6 +1,7 @@
 @import "DarkBlue"
 
 * {
+	font: "Terminus (TTF) Bold 18";
 	foreground: #60BDEC;
 	background: #000000cc;
 	border-color: #ffaafc;

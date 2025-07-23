@@ -140,12 +140,12 @@
 (load-theme 'Lunacy t)
 
 (set-face-attribute 'default nil
-                    :font "Terminus"
+                    :font "Terminus (TTF)"
                     :weight 'bold
                     :height 160)
 
 (set-face-attribute 'fixed-pitch nil
-                    :font "Terminus"
+                    :font "Terminus (TTF)"
                     :weight 'bold
                     :height 160)
 
