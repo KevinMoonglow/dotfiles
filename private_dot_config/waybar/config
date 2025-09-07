@@ -7,7 +7,7 @@
     // "width": 1280, // Waybar width
     "spacing": 4, // Gaps between modules (4px)
     // Choose the order of the modules
-    "modules-left": ["hyprland/workspaces", "sway/workspaces", "hyprland/submap", "sway/mode", "hyprland/window", "sway/window"],
+    "modules-left": ["hyprland/workspaces", "sway/workspaces", "niri/workspaces", "hyprland/submap", "sway/mode", "hyprland/window", "sway/window", "niri/window"],
     "modules-center": [],
     "modules-right": ["mpd", "idle_inhibitor", "pulseaudio", "memory", "clock", "tray"],
     "sway/workspaces": {
@@ -37,6 +37,19 @@
              "default": ""
 		},
 	},
+	"niri/workspaces": {
+		"format": "{icon}<sub>{index}</sub>",
+		"format-icons": {
+			"home": "",
+			"dev": "",
+			"chat": "",
+			"browser": "󰈹",
+			"art": "󰏘",
+			"gaming": "󰯉",
+			"scratch": "",
+			"default": "",
+		}
+	},
 
 	"hyprland/workspaces#icons": {
 		"format": "{windows}",
@@ -50,6 +63,16 @@
 	},
 
 	"hyprland/window": {
+		"format": "{}",
+		"rewrite": {
+			"(.*) — Mozilla Firefox$": "  $1",
+			"^Mozilla Firefox$": " ",
+			"^Discord \\| (.*)": "󰙯  $1",
+			"^• Discord \\| (.*)": "󰙯  • $1",
+			"^\\(([0-9]+)\\) Discord \\| (.*)": "󰙯  ($1) $2"
+		},
+	},
+	"niri/window": {
 		"format": "{}",
 		"rewrite": {
 			"(.*) — Mozilla Firefox$": "  $1",
@@ -108,7 +131,20 @@
     "clock": {
         // "timezone": "America/New_York",
         "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
-        "format-alt": "{:%H:%M %Y-%m-%d}"
+        "format-alt": "{:%H:%M %Y-%m-%d}",
+        "calendar": {
+                    "mode"          : "month",
+                    "mode-mon-col"  : 3,
+                    "weeks-pos"     : "",
+                    "on-scroll"     : 1,
+                    "format": {
+                              "months":     "<span color='#ffead3'><b>{}</b></span>",
+                              "days":       "<span color='#ecc6d9'>{}</span>",
+                              "weeks":      "<span color='#99ffdd'><b>W{}</b></span>",
+                              "weekdays":   "<span color='#ffcc66'><b>{}</b></span>",
+                              "today":      "<span color='#ff6699'><b>{}</b></span>"
+                              }
+                    }
     },
     "cpu": {
         "format": "{usage}% ",
@@ -157,5 +193,25 @@
         "escape": true,
         "exec": "$HOME/.config/waybar/mediaplayer.py 2> /dev/null" // Script in resources folder
         // "exec": "$HOME/.config/waybar/mediaplayer.py --player spotify 2> /dev/null" // Filter player based on name
-    }
+    },
+	"custom/notif": {
+		"tooltip": false,
+		"format": "{icon}",
+		"format-icons": {
+		  "notification": "<span foreground='red'><sup></sup></span>",
+		  "none": "",
+		  "dnd-notification": "<span foreground='red'><sup></sup></span>",
+		  "dnd-none": "",
+		  "inhibited-notification": "<span foreground='red'><sup></sup></span>",
+		  "inhibited-none": "",
+		  "dnd-inhibited-notification": "<span foreground='red'><sup></sup></span>",
+		  "dnd-inhibited-none": ""
+		},
+		"return-type": "json",
+		"exec-if": "which swaync-client",
+		"exec": "swaync-client -swb",
+		"on-click": "swaync-client -t -sw",
+		"on-click-right": "swaync-client -d -sw",
+		"escape": true
+	}
 }]
