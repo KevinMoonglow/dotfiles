@@ -6,18 +6,18 @@ Item {
 		anchors.fill: parent
 		onWheel: (wheel) => {
 			if (wheel.angleDelta.y > 0) {
-				NiriManager.focusLeft()
+				DesktopManager.focusLeft()
 			}
 			else if(wheel.angleDelta.y < 0) {
-				NiriManager.focusRight()
+				DesktopManager.focusRight()
 			}
 		}
 		onClicked: (mouse) => {
 			if(mouse.button === 1) {
-				NiriManager.toggleOverview()
+				DesktopManager.toggleOverview()
 			}
 			else if(mouse.button === 2) {
-				NiriManager.windowList()
+				DesktopManager.windowList()
 			}
 		}
 		HoverHandler {

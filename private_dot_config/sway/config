@@ -15,7 +15,7 @@ set $up k
 set $right l
 # Your preferred terminal emulator
 set $term kitty
-set $browser firefox
+set $browser zen-browser
 # Your preferred application launcher
 # Note: pass the final command to swaymsg so that the resulting window can be opened
 # on the original workspace that the command was run on.
@@ -23,12 +23,17 @@ set $menu "rofi -modi drun,run -show drun | xargs swaymsg exec --"
 
 font pango:Terminus Bold 15
 
+xwayland enable
+
 ### Output configuration
 
+output DP-1 bg /mnt/share/images/wallpaper/widescreen/16:9/_segatasam__tails_wallpaper_by_segatasam-d5f0r8s.png fill
+output DP-2 bg /mnt/share/images/wallpaper/widescreen/16:9/cream_wallpaper_by_segatasam-d5f8tkc.png fill
 output * bg /mnt/share/images/wallpaper/widescreen/16:9/_segatasam__tails_wallpaper_by_segatasam-d5f0r8s.png fill
 
-output DP-1 mode 2560x1440@144Hz pos 0 480 adaptive_sync off
-output DP-2 mode 1920x1080@144Hz pos 2560 0 adaptive_sync off transform 270
+output DP-1 mode 2560x1440@144Hz pos 0 0 adaptive_sync off
+#output DP-2 mode 1920x1080@144Hz pos 2560 480 adaptive_sync off transform 270
+output DP-2 mode 1920x1080@120Hz pos 2560 180 adaptive_sync off
 
 #
 # Example configuration:
@@ -67,7 +72,19 @@ output DP-2 mode 1920x1080@144Hz pos 2560 0 adaptive_sync off transform 270
 input "type:keyboard" {
 	xkb_options caps:ctrl_modifier,compose:ralt
 }
+input "type:pointer" {
+	accel_profile "flat"
+}
 
+
+exec --no-startup-id dunst
+exec --no-startup-id copyq --start-server hide
+exec --no-startup-id swww-daemon
+
+exec --no-startup-id xwayland-satellite :4
+
+exec systemctl --user import-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP SWAYSOCK I3SOCK XCURSOR_SIZE XCURSOR_THEME
+exec --no-startup-id qs -c bar
 
 
 #class                  border     bg         text     indicator  child_border
@@ -422,8 +439,10 @@ mode "$mode_music" {
 	bindsym --whole-window button5 exec --no-startup-id mpc volume -2 && play $vol_sound
 }
 
-bindsym --whole-window $mod+button4 exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +2% && play $vol_sound
-bindsym --whole-window $mod+button5 exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -2% && play $vol_sound
+#bindsym --whole-window $mod+ctrl+button4 exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +2% && play $vol_sound
+#bindsym --whole-window $mod+ctrl+button5 exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -2% && play $vol_sound
+bindsym --whole-window $mod+ctrl+button4 exec --no-startup-id ~/.config/bin/adjust_volume +2
+bindsym --whole-window $mod+ctrl+button5 exec --no-startup-id ~/.config/bin/adjust_volume -2
 
 bindsym XF86AudioPlay exec --no-startup-id mpc toggle
 bindsym XF86AudioNext exec --no-startup-id mpc next
@@ -431,7 +450,20 @@ bindsym XF86AudioPrev exec --no-startup-id mpc prev
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
 
 bar {
-	swaybar_command waybar -c ~/.config/waybar/config-fennec
+	#swaybar_command waybar -c ~/.config/waybar/config-fennec
+    #position bottom
+
+    # When the status_command prints a new line to stdout, swaybar updates.
+    # The default just shows the current date and time.
+    #status_command while date +'%Y-%m-%d %X'; do sleep 1; done
+
+    #colors {
+    #    statusline #ffffff
+    #    background #000000aa
+    #    active_workspace #ffaafcff #000088aa #ffffff
+    #    inactive_workspace #000000aa #000000aa #ffffff
+    #}
+
 }
 
 

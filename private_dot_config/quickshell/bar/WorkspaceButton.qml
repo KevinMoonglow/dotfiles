@@ -45,7 +45,7 @@ Rectangle {
 	}
 
 	HoverText {
-		message: modelData.name || modelData.idx
+		message: modelData.name
 		item: root
 		gravity: Edges.Top
 		edges: Edges.Top
@@ -68,9 +68,9 @@ Rectangle {
 		anchors.fill: parent
 		acceptedButtons: Qt.LeftButton | Qt.RightButton
 		onPressed: mouse => {
-			//NiruiManager.toWorkspace.target = modelData.idx
+			//NiriManager.toWorkspace.target = modelData.idx
 			if(mouse.button == 1) {
-				NiriManager.setWorkspace(modelData.idx)
+				DesktopManager.setWorkspace(modelData.idx)
 			}
 			else if(mouse.button == 2) {
 				renameDialog.active = true
@@ -86,6 +86,9 @@ Rectangle {
 		anchorBottom: true
 		prompt: " Rename"
 		value: modelData.name
+		onAccepted: newName => {
+			DesktopManager.nameWorkspace(newName, modelData.idx)
+		}
 	}
 	RowLayout {
 		anchors.fill: parent

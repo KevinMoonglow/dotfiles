@@ -10,10 +10,10 @@ PanelWindow {
 	property int displayTime: 1500
 	property bool muted: false
 
-	property string muteIcon: ""
-	property string silentIcon: ""
-	property string quietIcon: ""
-	property string loudIcon: ""
+	property string muteIcon: "󰸈"
+	property string silentIcon: "󰕿"
+	property string quietIcon: "󰖀"
+	property string loudIcon: "󰕾"
 
 	property string baseColor: "#FFC5FC"
 
@@ -45,17 +45,30 @@ PanelWindow {
 
 	onVolumeChanged: {
 		visible = true
+		if(!initTimer.running)
+			rect.opacity = 1.0
 		timer.restart()
 	}
+	Timer {
+		id: initTimer
+		interval: 50
+		running: true
+		onTriggered: {
+			print("!!!")
+			rect.opacity = 1.0
+		}
+	}
+
 	Timer {
 		id: timer
 		interval: root.displayTime
 		running: true
 		onTriggered: {
-			root.done()
+			rect.opacity = 0.0
 		}
 	}
 	WrapperRectangle {
+		id: rect
 		anchors.fill: parent
 		border.width: 2
 		border.color: root.baseColor
@@ -63,7 +76,29 @@ PanelWindow {
 		color: "#cc000000"
 		leftMargin: 8
 		rightMargin: 8
+		opacity: 0
+
+
+		Behavior on opacity {
+				NumberAnimation {
+				target: rect;
+				property: "opacity";
+				duration: 200
+				easing.type: Easing.OutQuad
+				onRunningChanged: {
+					if(!running && rect.opacity  <= 0.01) {
+						root.done()						
+					}
+				}
+			}
+		}
+
+
+
+
+
 		RowLayout {
+			spacing: 2
 			SText {
 				color: {
 					if(root.muted) "#888888"
@@ -75,6 +110,7 @@ PanelWindow {
 					else if(root.volume < root.loudLevel) root.quietIcon
 					else if(root.volume >= root.loudLevel) root.loudIcon
 				}
+				font.pointSize: 15
 				Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
 			}
 			SText {
@@ -102,6 +138,9 @@ PanelWindow {
 					anchors.left: parent.left
 					anchors.bottom: parent.bottom
 					width: parent.width * root.volume/100
+					Behavior on width {
+						NumberAnimation { duration: 100 }
+					}
 				}
 			}
 		}

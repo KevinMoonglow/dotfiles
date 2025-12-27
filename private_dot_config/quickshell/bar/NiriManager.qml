@@ -7,15 +7,24 @@ import QtQuick
 
 Singleton {
 	id: root
-	property var ws_data: {}
+	property var ws_data: ({})
 	property var windows: []
 	property var focusedWindow: null
+	property string focusedWindowTitle: focusedWindow?.title ?? ""
 	property list<int> urgencyQueue: []
+	property bool running: niriDataStream.running
+	property string bindMode: "default"
+
+	signal workspaceUpdate(newdata: var)
 
 	function setWorkspace(i: int) {
 		workspaceSwitcher.target = i
 		workspaceSwitcher.running = true
 	}
+	function workspacesFor(screen: string): list<var> {
+		return root.ws_data?.filter(x => x.output == screen) ?? []
+	}
+
 	function focusRight() {
 		genericAction.action = "focus-column-right"
 		genericAction.running = true
@@ -24,6 +33,8 @@ Singleton {
 		genericAction.action = "focus-column-left"
 		genericAction.running = true
 	}
+	function focusUp() {}
+	function focusDown() {}
 	function toggleOverview() {
 		genericAction.action = "toggle-overview"
 		genericAction.running = true
@@ -38,12 +49,6 @@ Singleton {
 
 		genericActionArgs.running = true
 	}
-	function windowList() {
-		if(!windowListPopup.running)
-			windowListPopup.running = true
-		else
-			windowListPopup.running = false
-	}
 	Timer {
 		id: niriTimer
 		interval: 1000
@@ -52,12 +57,6 @@ Singleton {
 		onTriggered: workspaceLookup.running = true
 	}
 
-	Process {
-		id: windowListPopup
-		command: ['rofi', '-modi', 'window', '-show', 'window', '-location', '7',
-		'-theme', 'lunacy-dmenu-v',
-		'-theme-str', 'window {width: 40em; margin: 0 0 8px 18px;} listview {}']
-	}
 	Process {
 		id: genericAction
 		property string action: ""
@@ -92,6 +91,7 @@ Singleton {
 						a.output.localeCompare(b.output)
 					})
 					root.ws_data = rawWorkspaceData
+					workspaceUpdate(root.ws_data)
 				}
 				if(data.WorkspaceActivated && data.WorkspaceActivated.focused) {
 					let oldWSi = root.ws_data.findIndex(x => x.is_focused)
@@ -111,7 +111,7 @@ Singleton {
 						root.ws_data[oldWSi] = oldWS
 						root.ws_data[newWSi] = newWS
 					}
-					ws_data = ws_data
+					workspaceUpdate(root.ws_data)
 				}
 				if(data.WorkspaceUrgencyChanged) {
 					let WSi = root.ws_data.findIndex(x => x.id == data.WorkspaceUrgencyChanged.id)
@@ -119,7 +119,7 @@ Singleton {
 						let WS = root.ws_data[WSi]
 						WS.is_urgent = data.WorkspaceUrgencyChanged.urgent
 
-						ws_data = ws_data
+						workspaceUpdate(root.ws_data)
 					}
 				}
 				if(data.WindowsChanged) {
@@ -167,6 +167,7 @@ Singleton {
 					a.output.localeCompare(b.output)
 				})
 				ws_data = data
+				workspaceUpdate(ws_data)
 			}
 		}
 	}

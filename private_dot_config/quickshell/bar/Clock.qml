@@ -4,7 +4,7 @@ import QtQuick.Layouts
 
 Rectangle {
 	id: clockRect
-	color: "#cc000000"
+	color: "#ee000000"
 	implicitWidth: clock.width + icon.width + 28
 	Layout.preferredHeight: parent.height
 	Layout.alignment: Qt.AlignBottom
@@ -23,6 +23,7 @@ Rectangle {
 			if(ProcManager.calData === undefined) return ""
 
 			let t = ProcManager.calData.split("\n")
+			if(!t || t.length < 2) return ""
 			let d = x => {
 				let today = ProcManager.monthDay
 				return x.trim() == today ? `<font color="yellow">${x}</font>` : x

@@ -6,9 +6,16 @@ ModuleTab {
 	id: root
 	property real size: 1000
 	border.color: "#ee76d1ff"
+	color: "#dd000000"
+	property alias truncated: winText.truncated
+
+	property var filters: {
+	}
+
 
 	SText {
-		text: NiriManager.focusedWindow?.title.trim() ?? ""
+		id: winText
+		text: DesktopManager.focusedWindowTitle
 		color: "white"
 		elide: Text.ElideRight
 		wrapMode: Text.WrapAnywhere

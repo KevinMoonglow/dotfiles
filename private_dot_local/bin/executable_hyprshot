@@ -7,7 +7,7 @@ set -e
 
 function Help() {
     cat <<EOF
-Usage: hyprshot [options ..] [-m [mode] ..] -- [command]
+Usage: $(basename $0) [options ..] [-m [mode] ..] -- [command]
 
 Hyprshot is an utility to easily take screenshot in Hyprland using your mouse.
 

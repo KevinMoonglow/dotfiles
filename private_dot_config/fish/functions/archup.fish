@@ -1,4 +1,4 @@
-function archup --wraps='yay -Syu' --description 'alias archup yay -Syu'
-  yay -Syu $argv
+function archup --wraps='yay -SyuN' --description 'System Update (No AUR)'
+  yay -SyuN $argv
         
 end

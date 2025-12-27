@@ -1,7 +1,7 @@
 * {
 	font: "Terminus (TTF) Bold 18";
 	background-color: transparent;
-	text-color: #ffffff;
+	text-color: @foreground;
 
 	bg: #000000aa;
 	bg2: #000000aa;
@@ -12,6 +12,8 @@
 	col2: #29315A;
 	col3: #ffaafccc;
 	col4: #6472b8;
+
+	foreground: #ffffff;
 }
 window {
 	width: 35em;
@@ -42,11 +44,15 @@ spacer {
 	background-color: @bg2;
 }
 
+textbox {
+	text-color: @foreground;
+}
 
 
 prompt {
 	background-color: @col2;
 	padding: 0.1em 0.4em 0.1em 0.1em;
+	text-color: @foreground;
 }
 entry {
 	padding: 0.1em 0.1em;
@@ -56,8 +62,14 @@ entry {
 element selected {
 	background-color: @col3;
 }
-element active {
-	text-color: @col4;
+element-text active {
+	text-color: @col1;
+}
+element selected active {
+	background-color: @col4;
+}
+element-text {
+	text-color: @foreground;
 }
 element-icon {
 	padding: 0 0.2em;

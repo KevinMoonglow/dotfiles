@@ -13,6 +13,8 @@ ControlDialog {
 	topLeftRadius: 0
 	bottomLeftRadius: 0
 
+	signal accepted(value: string)
+
 	Loader {
 		id: loader
 		Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
@@ -61,7 +63,7 @@ ControlDialog {
 							}
 						}
 						onAccepted: {
-							NiriManager.nameWorkspace(textInput.text, modelData.idx)
+							root.accepted(textInput.text)
 							root.active = false
 						}
 					}

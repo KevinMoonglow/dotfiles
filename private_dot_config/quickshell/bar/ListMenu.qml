@@ -5,35 +5,35 @@ import QtQuick.Layouts
 
 PopupWindow {
 	id: root
-	property var baseMenu
-	property ObjectModel menuItems
+	property list<var> menuItems
 	property Item hoveredItem
-
-	QsMenuOpener {
-		id: menu
-	}
 
 	Behavior on visible {
 		id: visBehavior
 		SequentialAnimation {
-			ScriptAction { script: updateItems(visBehavior.targetValue) }
-			PauseAnimation { duration: 100 }
+			ScriptAction { script: {
+				if(visBehavior.targetValue === true)
+					updateItems(visBehavior.targetValue)
+			}}
+			PauseAnimation { duration: 50 }
+			ScriptAction { script: {
+				if(visBehavior.targetValue === false) {
+					expand.stop()
+					retract.restart()
+				}
+			}}
+			PauseAnimation { duration: !visBehavior.targetValue ? 200 : 50 }
 			PropertyAction { }
+			ScriptAction { script: {
+				if(visBehavior.targetValue === true) {
+					retract.stop()
+					expand.restart()
+				}
+			}}
 		}
 	}
 
 	function updateItems(newValue) {
-		print(newValue)
-		if(newValue) {
-			menu.menu = Qt.binding(() => root.baseMenu)
-			menuItems = Qt.binding(() => menu.children)
-			print("show")
-		}
-		else {
-			menu.menu = null
-			menuItems = null
-			print("empty")
-		}
 	}
 	Loader {
 		id: subMenuLoader
@@ -42,22 +42,66 @@ PopupWindow {
 	implicitHeight: Math.max(wrap.height, 16)
 	implicitWidth: Math.max(wrap.width, 16)
 
+
+	SequentialAnimation {
+		id: expand
+		ParallelAnimation {
+			NumberAnimation {
+				target: rect
+				property: "implicitHeight"
+				duration: 200
+				easing.type: Easing.OutCubic
+				from: 16
+				to: Math.max(wrap.height, 16)
+			}
+			NumberAnimation {
+				target: rect
+				property: "y"
+				duration: 200
+				easing.type: Easing.OutCubic
+				from: { wrap.height }
+				to: 0
+			}
+		}
+		PauseAnimation { duration: 200 }
+	}
+	SequentialAnimation {
+		id: retract
+		ParallelAnimation {
+			NumberAnimation {
+				target: rect
+				property: "implicitHeight"
+				duration: 200
+				easing.type: Easing.InCubic
+				from: Math.max(wrap.height, 16)
+				to: 16
+			}
+			NumberAnimation {
+				target: rect
+				property: "y"
+				duration: 200
+				easing.type: Easing.InCubic
+				from: 0
+				to: { wrap.height }
+			}
+		}
+		PauseAnimation { duration: 200 }
+		onRunningChanged: {
+			if(!running) {
+				root.done()
+			}
+		}
+	}
+	signal done
 	color: "transparent"
 	ClippingRectangle {
 		id: rect
-		anchors.fill: parent
 		color: "#cc000000"
 		border.color: "#ffc5fc"
 		border.width: 1
 		radius: 8
-	
-///		Behavior on width {
-///			NumberAnimation {
-///				duration: 2000
-///				easing.type: Easing.InOutQuad
-///			}
-///		}
-
+		implicitHeight: wrap.height
+		implicitWidth: wrap.width
 
 
 		Timer {
@@ -109,6 +153,8 @@ PopupWindow {
 					
 					Rectangle {
 						id: innerWrap
+
+
 						Layout.minimumHeight: 16
 						Layout.minimumWidth: 16
 						Layout.preferredWidth: row.width
@@ -118,7 +164,7 @@ PopupWindow {
 						}
 
 						color: {
-							(hover.hovered && !modelData.isSeparator)
+							(hover.hovered && modelData.itemText !== "---")
 						|| (subMenuLoader.item
 						&& subMenuLoader.item.anchor.item == innerWrap
 						&& subMenuLoader.source !== "")
@@ -128,7 +174,7 @@ PopupWindow {
 						HoverHandler {
 							id: hover
 							onHoveredChanged: () => {
-								if(hovered && modelData.hasChildren) {
+								if(hovered && modelData?.hasChildren) {
 									subMenuHoverTimer.start()
 								}
 								else if(!hovered && menuHover.hovered) {
@@ -149,7 +195,7 @@ PopupWindow {
 							id: subMenuHoverTimer
 							interval: 200
 							onTriggered: {
-								if(modelData.hasChildren && hover.hovered) {
+								if(hasChildren && hover.hovered) {
 									if(subMenuLoader.item) {
 										subMenuLoader.item.visible = false
 										subMenuLoader.source = ""
@@ -168,8 +214,8 @@ PopupWindow {
 							id: mouse
 							anchors.fill: parent
 							onClicked: (mouse) => {
-								if(modelData.enabled && !modelData.isSeparator) {
-									modelData.triggered()
+								if(!modelData.disabled && !modelData.itemText !== "---") {
+									if(modelData.action) modelData.action()
 									root.visible = false
 								}
 							}
@@ -180,23 +226,29 @@ PopupWindow {
 							implicitWidth: parent.width
 							implicitHeight: parent.height
 							IconImage {
-								source: modelData.icon
+								source: modelData.itemIcon ?? ""
 								Layout.leftMargin: 6
 								Layout.minimumWidth: 16
 
 								Layout.preferredWidth: 24
 								Layout.preferredHeight: 24
 								Layout.topMargin: 2
-								visible: !modelData.isSeparator
+								visible: modelData.itemText !== "---" && modelData.itemIcon
 							}
 							SText {
-								text: modelData.text
+								text: modelData.itemText
 								Layout.minimumWidth: 75
 								Layout.fillWidth: true
 								Layout.rightMargin: 16
+								Layout.leftMargin: modelData.itemIcon ? 0: 8
 								font.pointSize: 14
-								color: modelData.enabled ? "white" : "gray"
-								visible: !modelData.isSeparator
+								color: {
+									if(modelData.color) modelData.color
+									else if(modelData.disabled) "gray"
+									else if(modelData.active) "#FFC5FC"
+									else "white"
+								}
+								visible: modelData.itemText !== "---"
 
 							}
 							SText {
@@ -204,7 +256,7 @@ PopupWindow {
 								Layout.rightMargin: 4
 								font.pointSize: 14
 								color: "white"
-								visible: modelData.hasChildren
+								visible: modelData?.hasChildren ?? false
 							}
 							Rectangle {
 								color: "#ffc5fc"
@@ -214,7 +266,7 @@ PopupWindow {
 								Layout.rightMargin: 0
 								Layout.minimumHeight: 2
 								Layout.minimumWidth: 16
-								visible: modelData.isSeparator
+								visible: modelData.itemText === "---"
 							}
 						}
 					}

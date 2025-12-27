@@ -6,7 +6,7 @@ import Quickshell.Services.SystemTray
 
 Rectangle {
 	property SystemTrayItem item: modelData
-	property ListMenu trayMenu
+	property TrayMenu trayMenu
 	id: root
 	implicitWidth: icon.width + 8
 	implicitHeight: icon.height
@@ -53,7 +53,7 @@ Rectangle {
 	}
 	HoverText {
 		id: hoverText
-		message: [ modelData.tooltipTitle, modelData.tooltipDescription ]
+		message:[ modelData.tooltipTitle, modelData.tooltipDescription ]
 			.filter(x => x).join("\n") || modelData.title
 		item: root
 		gravity: Edges.Top
@@ -69,8 +69,12 @@ Rectangle {
 			print(mouse.button, root.item.hasMenu, root.item.onlyMenu)
 			if(mouse.button == 2 || (mouse.button == 1 && root.item.onlyMenu)) {
 				if(root.trayMenu.visible) {
+					let f = () => {
+						root.trayMenu.done.disconnect(f)
+						root.trayMenu.baseMenu = null
+					}
+					root.trayMenu.done.connect(f)
 					root.trayMenu.visible = false
-					root.trayMenu.baseMenu = null
 				}
 				else if(root.item.hasMenu) {
 					root.trayMenu.anchor.item = root

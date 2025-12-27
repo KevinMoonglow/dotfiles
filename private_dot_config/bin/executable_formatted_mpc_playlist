@@ -1,8 +1,11 @@
 #!/usr/bin/fish
 
 set -l entries (mpc playlist -f '%title%	%album%	%artist%	%file%')
+set -l index 0
 
 for e in $entries
+    set index (math $index + 1)
+
     set -l item (string split "	" $e)
     
     set -l filename $item[4]
@@ -18,5 +21,5 @@ for e in $entries
 
 
 
-    printf "🎵 %-50s	%-25s %-20s	%s	%s	%s	%s\n" $title $album $artist $item[1] $item[2] $item[3] $filename
+    printf "🎵 %-50s	%-25s %-20s\0meta\x1f%s %s %s %s\x1finfo\x1f%s\n" $title $album $artist $item[1] $item[2] $item[3] $filename $index
 end

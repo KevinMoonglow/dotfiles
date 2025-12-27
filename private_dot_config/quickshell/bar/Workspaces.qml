@@ -14,7 +14,7 @@ Rectangle {
 
 	Layout.preferredHeight: parent.height
 
-	property list<var> ws_data
+	//property list<var> ws_data
 	required property ShellScreen screen
 	property var lookups: {
 		"home": "",
@@ -45,7 +45,11 @@ Rectangle {
 		spacing: 0
 		Repeater {
 			model: ScriptModel {
-				values: NiriManager.ws_data?.filter(x => x.output == screen.name) ?? []
+				values: {
+					console.log("=======", DesktopManager.ws_data.length)
+					//return DesktopManager.ws_data?.filter(x => x && x.output == screen.name) ?? []
+					return DesktopManager.workspacesFor(screen.name)
+				}
 			}
 			WorkspaceButton {
 			}

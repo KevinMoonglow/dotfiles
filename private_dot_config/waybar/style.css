@@ -1,7 +1,7 @@
 * {
     /* `otf-font-awesome` is required to be installed for icons */
     font-family: Symbols Nerd Font Mono, "FiraCode Nerd Font", Roboto, Helvetica, Arial, sans-serif;
-    font-size: 18px;
+    font-size: 14pt;
 	/* font-weight: bold; */
 	/*
 	--primary: #ffc5fd;
@@ -135,10 +135,12 @@ button:hover {
 #window {
 	background: rgba(0, 0, 0, 0.6);
 	padding: 0 16px;
-	border-radius: 16px 16px;
+	border-radius: 10px 10px 0px 0px;
+	border-top: 2px solid #76d1ff;
+	border-left: 2px solid #76d1ff;
+	border-right: 2px solid #76d1ff;
 }
 #window label {
-	border-bottom: 3px solid #ffffff;
 }
 window#waybar.empty #window {
     background: transparent;

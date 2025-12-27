@@ -14,7 +14,7 @@ Singleton {
 		Qt.formatDateTime(clock.date, "hh:mm:ss yyyy-MM-dd")
 	}
 	readonly property string monthDay: {
-		Qt.formatDateTime(clock.date, "dd")
+		Qt.formatDateTime(clock.date, "d")
 	}
 	property string ramPercent
 	property string calData

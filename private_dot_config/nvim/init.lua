@@ -1,6 +1,7 @@
 --============================================================================
 --======== Base Vim Options===================================================
 vim.g.mapleader = " "
+vim.g.maplocalleader = "\\"
 vim.keymap.set("n", "<leader>-", vim.cmd.Ex)
 
 vim.keymap.set("n", "<leader>bn", vim.cmd.bnext)
@@ -73,146 +74,163 @@ o.backupdir = vim.fn.expand("~/.local/state/nvim/backup")
 o.timeout = true
 o.timeoutlen = 300
 
+-- Plugin settings that need to be loaded early. --
+vim.g.indentLine_char_list = {'│', '┇', '┊', '┃', '┆', '┋'}
+vim.g.vim_json_conceal = 0
+--vim.g.indentLine_setConceal = 0
 
+vim.g.Hexokinase_highlighters = { 'backgroundfull' }
+vim.g.Hexokinase_alpha_bg = '#000000'
+
+------------------------------------------------------------
+
+
+o.isfname = "@,48-57,/,.,-,_,+,,,#,$,%,~"
+
+Luna = {}
 
 --============================================================================
 --======== Plugin Configuration ==============================================
-local Plug = vim.fn['plug#']
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
+	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+	local out = vim.fn.system({"git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath})
+	if vim.v.shell_error ~= 0 then
+		vim.api.nvim_echo({
+			{ "Failed to clone lazy.nvim:\n", "ErrorMsg" },
+			{ out, "WarningMsg" },
+			{ "\nPress any key to exit..." },
+		}, true, {})
+	    vim.fn.getchar()
+	    os.exit(1)
+	end
+end
+vim.opt.rtp:prepend(lazypath)
 
-vim.call("plug#begin", vim.fn.stdpath("data") .. "/plugged")
+require("lazy").setup({
+	spec = {
+    	-- Various nvim things seem to need this
+		{'nvim-lua/plenary.nvim'},
 
--- Various nvim things seem to need this
-Plug 'nvim-lua/plenary.nvim'
+		-- Fuzzy-finder
+		{'nvim-telescope/telescope.nvim'},
 
--- Fuzzy-finder
-Plug 'nvim-telescope/telescope.nvim'
-
--- Syntax highlighting/parsing
-Plug('nvim-treesitter/nvim-treesitter', {['do'] = ':TSUpdate'})
-Plug 'nvim-treesitter/playground'
-
--- Navigate undo history
-Plug 'mbbill/undotree'
-
--- Git interface
-Plug 'tpope/vim-fugitive'
-
--- LSP Support
-Plug 'neovim/nvim-lspconfig'                               -- Required
-Plug 'tamago324/nlsp-settings.nvim'
-Plug('williamboman/mason.nvim', {['do'] = ':MasonUpdate'}) -- Optional
-Plug 'williamboman/mason-lspconfig.nvim'                   -- Optional
-
--- Autocompletion
-Plug 'hrsh7th/nvim-cmp'     -- Required
-Plug 'hrsh7th/cmp-nvim-lsp' -- Required
-Plug 'L3MON4D3/LuaSnip'     -- Required
-
-Plug('VonHeikemen/lsp-zero.nvim', {branch = 'v2.x'})
-
--- Syntax for fish scripts
-Plug 'khaveesh/vim-fish-syntax'
-Plug 'ryanoasis/vim-devicons'
-
--- Colorize color codes
-Plug('rrethy/vim-hexokinase', { ['do'] = 'make hexokinase' })
-
--- Nice which-key menu
-Plug 'folke/which-key.nvim'
-
--- Multiple cursors
-Plug 'mg979/vim-visual-multi'
-
--- Syntax for pegjs
-Plug 'alunny/pegjs-vim'
-
--- Visualize indentation
-Plug 'Yggdroot/indentLine'
-
-Plug 'nvimdev/dashboard-nvim'
-
-Plug 'fladson/vim-kitty'
-Plug '2kabhishek/nerdy.nvim'
-
-Plug 'alker0/chezmoi.vim'
-
-vim.call("plug#end")
+		-- Syntax highlighting/parsing
+		{'nvim-treesitter/nvim-treesitter', branch = "master", lazy = false, build = ':TSUpdate'},
+		{'nvim-treesitter/playground'},
 
 
-Luna = {}
-local lsp = require('lsp-zero').preset("recommended")
+		-- Navigate undo history
+		{'mbbill/undotree'},
 
-lsp.ensure_installed{
---	'tsserver',
-	'rust_analyzer',
-}
+		-- Git interface
+		{'tpope/vim-fugitive'},
 
-local nlspsettings = require("nlspsettings")
+		{'neovim/nvim-lspconfig', tag='v1.8.0', pin=true},
+		{'hrsh7th/cmp-nvim-lsp'},
+		{'hrsh7th/nvim-cmp'},
 
-nlspsettings.setup({
-  config_home = vim.fn.stdpath('config') .. '/nlsp-settings',
-  local_settings_dir = ".nlsp-settings",
-  local_settings_root_markers_fallback = { '.git' },
-  append_default_schemas = true,
-  loader = 'json'
+		{'mason-org/mason.nvim', opts = {}},
+		{'mason-org/mason-lspconfig.nvim', opts = {}},
+
+		-- Syntax for fish scripts
+		{'khaveesh/vim-fish-syntax'},
+		{'ryanoasis/vim-devicons'},
+
+		-- Colorize color codes
+		{'rrethy/vim-hexokinase', build = 'make hexokinase' },
+
+		-- Nice which-key menu
+		{'folke/which-key.nvim'},
+
+		-- Multiple cursors
+		{'mg979/vim-visual-multi'},
+
+		-- Syntax for pegjs
+		{'alunny/pegjs-vim'},
+
+		-- Visualize indentation
+		{'Yggdroot/indentLine'},
+
+		{'nvimdev/dashboard-nvim'},
+
+		{'fladson/vim-kitty'},
+		{'2kabhishek/nerdy.nvim'},
+
+		{'alker0/chezmoi.vim'},
+	},
+
+	install = { colorscheme = {"lunacy"} },
+	checker = {enabled = true},
+})
+
+local lsp_def = require('lspconfig').util.default_config
+lsp_def.capabilities = vim.tbl_deep_extend(
+	'force',
+	lsp_def.capabilities,
+	require('cmp_nvim_lsp').default_capabilities()
+)
+
+vim.api.nvim_create_autocmd('LspAttach', {
+	desc = 'LSP actions',
+	callback = function(event)
+		local opts = {buffer = event.buf}
+	end,
 })
 
 
 
-
-lsp.on_attach(function(client, bufnr)
-  lsp.default_keymaps({buffer = bufnr})
-end)
-
 -- " (Optional) Configure lua language server for neovim
 --require('lspconfig').lua_ls.setup(lsp.nvim_lua_ls())
-require('lspconfig').lua_ls.setup({
+vim.lsp.config('lua_ls', {
 	Lua = {
 		hint = {
 			enable = true,
 		}
 	}
 })
-require('lspconfig').qmlls.setup {
-	cmd = {"qmlls6", "-E"}
-}
+vim.lsp.config('qmlls', {
+ 	cmd = {"qmlls6", "-E"}
+})
 
 
-lsp.setup()
+--lsp.setup()
 
 
 -- You need to setup `cmp` after lsp-zero
 local cmp = require('cmp')
-local cmp_action = require('lsp-zero').cmp_action()
-
+--local cmp_action = require('lsp-zero').cmp_action()
+ 
 cmp.setup{
-  mapping = {
-    ['<Tab>'] = cmp.mapping.confirm({select = true}),
-	['<C-j>'] = cmp.mapping(cmp.mapping.select_next_item()),
-	['<C-k>'] = cmp.mapping(cmp.mapping.select_prev_item()),
+	sources = {
+	 	{ name = 'nvim_lsp' },
+ 		{ name = 'luasnip' },
+	},
+	mapping = {
+		['<Tab>'] = cmp.mapping.confirm({select = true}),
+		['<C-j>'] = cmp.mapping(cmp.mapping.select_next_item()),
+ 		['<C-k>'] = cmp.mapping(cmp.mapping.select_prev_item()),
 
-    -- Ctrl+Space to trigger completion menu
-    ['<C-Space>'] = cmp.mapping.complete(),
+		-- Ctrl+Space to trigger completion menu
+	    ['<C-Space>'] = cmp.mapping.complete(),
 
-    -- Navigate between snippet placeholder
-    ['<C-f>'] = cmp_action.luasnip_jump_forward(),
-    ['<C-b>'] = cmp_action.luasnip_jump_backward(),
-  },
-  preselect = cmp.PreselectMode.Item,
-  completion = {
-	  completeopt = "menu,menuone"
-  }
+    	-- Navigate between snippet placeholder
+--	    ['<C-f>'] = cmp_action.luasnip_jump_forward(),
+--	    ['<C-b>'] = cmp_action.luasnip_jump_backward(),
+   },
+   preselect = cmp.PreselectMode.Item,
+   completion = {
+ 	  completeopt = "menu,menuone"
+   }
 }
-
-cmp.sources = cmp.config.sources({
-	{ name = 'nvim_lsp' },
-	{ name = 'luasnip' },
-}, {
-	{ name = 'buffer' },
-})
-
-
--- Personal late actions: [after/plugin/luna.lua]
+-- 
+-- cmp.sources = cmp.config.sources({
+-- 	{ name = 'nvim_lsp' },
+-- 	{ name = 'luasnip' },
+-- }, {
+-- 	{ name = 'buffer' },
+-- })
+-- 
 
 function Luna.userColors()
 	local hi = vim.api.nvim_set_hl
@@ -279,13 +297,6 @@ require'nvim-treesitter.configs'.setup{
 	highlight = {enable=true},
 }
 
-vim.g.indentLine_char_list = {'│', '┇', '┊', '┃', '┆', '┋'}
-vim.g.vim_json_conceal = 0
---vim.g.indentLine_setConceal = 0
-
-vim.g.Hexokinase_highlighters = { 'backgroundfull' }
-vim.g.Hexokinase_alpha_bg = '#000000'
-
 
 --============================================================================
 --======== Keybindings =======================================================
@@ -301,77 +312,6 @@ wk.setup{
 
 
 function tbind(x) return function() return vim.cmd('silent! tabn ' .. x) end end
-
---[[
-LeaderMap = {name = "+leader"}
-
-LeaderMap.b = {name = "+buffer"}
-LeaderMap.p = {name = "+project"}
-LeaderMap.g = {name = "+git"}
-LeaderMap.x = {name = "+misc"}
-LeaderMap.w = {name = "+window"}
-
-local TabMap = {name = "+tab"}
-LeaderMap["<tab>"] = TabMap
-
-
-
-TabMap['<Tab>'] = {"gt", "Next Tab"}
-TabMap['<C-Tab>'] = {"gT", "Prev Tab"}
-TabMap['1'] = {tbind '1', "Tab 1"}
-TabMap['2'] = {tbind '2', "Tab 2"}
-TabMap['3'] = {tbind '3', "Tab 3"}
-TabMap['4'] = {tbind '4', "Tab 4"}
-TabMap['5'] = {tbind '5', "Tab 5"}
-TabMap['6'] = {tbind '6', "Tab 6"}
-TabMap['7'] = {tbind '7', "Tab 7"}
-TabMap['8'] = {tbind '8', "Tab 8"}
-TabMap['9'] = {tbind '9', "Tab 9"}
-TabMap[']'] = {"gt", "Next Tab"}
-TabMap['['] = {"gT", "Prev Tab"}
-TabMap['0'] = {vim.cmd.tablast, "Last Tab"}
-TabMap.N = {vim.cmd.tabnew, "New Tab"}
-TabMap.d = {vim.cmd.tabclose, "Close Tab"}
-
-
-LeaderMap.w["+"] = {"<C-w>+", "Height +"}
-LeaderMap.w["-"] = {"<C-w>-", "Height -"}
-LeaderMap.w[">"] = {"<C-w><gt>", "Width +"}
-LeaderMap.w["<"] = {"<C-w><lt>", "Width -"}
-LeaderMap.w["="] = {"<C-w>=", "Balance"}
-LeaderMap.w["_"] = {"<C-w>_", "Height Max"}
-LeaderMap.w["|"] = {"<C-w>|", "Width Max"}
-LeaderMap.w.h = {"<C-w>h", "Window ←"}
-LeaderMap.w.j = {"<C-w>j", "Window ↓"}
-LeaderMap.w.k = {"<C-w>k", "Window ↑"}
-LeaderMap.w.l = {"<C-w>l", "Window →"}
-LeaderMap.h = {"<C-w>h", "Window ←"}
-LeaderMap.j = {"<C-w>j", "Window ↓"}
-LeaderMap.k = {"<C-w>k", "Window ↑"}
-LeaderMap.l = {"<C-w>l", "Window →"}
-
-
-LeaderMap['-'] = {vim.cmd.Ex, "Manage Files"}
-LeaderMap.b.n = {vim.cmd.bnext, "Next"}
-LeaderMap.b.p = {vim.cmd.bprev, "Prev"}
-LeaderMap.b["]"] = {vim.cmd.bnext, "Next"}
-LeaderMap.b["["] = {vim.cmd.bprev, "Prev"}
-LeaderMap.b.N = {vim.cmd.enew, "New Buffer"}
-LeaderMap.b.d = {vim.cmd.bdelete, "Delete Buffer"}
-LeaderMap["]"] = {vim.cmd.bnext, "Next"}
-LeaderMap["["] = {vim.cmd.bprev, "Prev"}
-
-
-
-
-LeaderMap.x['/'] = {vim.cmd.noh, "Cancel Highlight"}
-
-LeaderMap.u = {vim.cmd.UndotreeToggle, "Undo Tree"}
-
-LeaderMap.g.g = {vim.cmd.Git, "Git Status"}
-
-wk.register(LeaderMap, {prefix = "<leader>"})
---]]
 
 wk.add({
     { "<leader>", group = "leader" },
@@ -447,7 +387,6 @@ vim.keymap.set("n", "<leader>?", function() vim.cmd.WhichKey("''") end, {desc = 
 --vim.keymap.set("i", "<D-.>", "", {})
 
 -- Keybindings that need to be registered after plugins load
--- This function is called in [after/plugin/luna.lua]
 function Luna.afterBinds()
 	local tele = require("telescope.builtin")
 	local nerdy = require('telescope').extensions.nerdy
@@ -462,7 +401,8 @@ function Luna.afterBinds()
 	--	tele.grep_string({ search = vim.fn.input("Grep> ") })
 	--end)
 end
-
+-- Previously called from another location, but lazy.nvim loads plugins immediately so this is happening late anyways.
+Luna.afterBinds()
 
 
 
@@ -492,3 +432,4 @@ require("dashboard").setup {
 		footer = {},
 	},
 }
+

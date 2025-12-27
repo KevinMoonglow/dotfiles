@@ -7,6 +7,17 @@ import QtQuick
 Singleton {
 	id: root
 	property string runtimeDir
+	property string configHome
+	property string title
+	property string file
+	property string artist
+	property string album
+	property string state
+	property real duration
+	property real elapsed
+	readonly property real elapsedPercent: {
+		duration > 0 ? elapsed / duration : 0
+	}
 	Process {
 		running: true
 		command: ['sh', '-c', 'echo -n $XDG_RUNTIME_DIR']
@@ -16,6 +27,28 @@ Singleton {
 				sock.connected = true
 			}
 		}
+	}
+	Process {
+		running: true
+		command: ['sh', '-c', 'echo -n ${XDG_CONFIG_HOME:-~/.config}']
+		stdout: StdioCollector {
+			onStreamFinished: {
+				configHome = this.text
+			}
+		}
+	}
+
+	function toggleFindSongDialog() {
+		print(findSong.running)
+		if(!findSong.running)
+			findSong.running = true
+		else
+			findSong.running = false
+		
+	}
+	Process {
+		id: findSong
+		command: [`${configHome}/bin/mpc_find_in_playlist`, "-location", "5", "-theme-str", "window {margin: 0 18px 8px 0; width: 51em;}"]
 	}
 	signal mixer(command: string)
 	signal player(command: string)
@@ -66,6 +99,8 @@ Singleton {
 				let m
 				if(message.match(/^OK MPD/)) {
 					sock.isIdle = false
+					root.sendCommand("status")
+					root.sendCommand("currentsong")
 				}
 				else if(m = message.match(/^ACK (.*)/)) {
 					sock.isIdle = false
@@ -100,12 +135,38 @@ Singleton {
 			console.log(data, data.length)
 
 			for(let {key, value} of data) {
-				if(key === "changed" && value === "mixer")
-					root.mixer(command)
-				else if(key === "changed" && value === "player")
-					root.player(command)
-				else if(key === "volume")
-					root.volume(command, parseInt(value, 10))
+				switch(key) {
+					case "changed":
+						if(value === "mixer")
+							root.mixer(command)
+						else if(value === "player")
+							root.player(command)
+						break
+					case "volume":
+						root.volume(command, parseInt(value, 10))
+						break
+					case "Title":
+						root.title = value
+						break
+					case "Artist":
+						root.artist = value
+						break
+					case "Album":
+						root.album = value
+						break
+					case "file":
+						root.file = value
+						break
+					case "state":
+						root.state = value
+						break
+					case "elapsed":
+						root.elapsed = parseFloat(value)
+						break
+					case "duration":
+						root.duration = parseFloat(value)
+						break
+				}
 			}
 		}
 		onIsIdleChanged: {
@@ -150,12 +211,31 @@ Singleton {
 			sock.connected = true
 		}
 	}
+	Timer {
+		id: songElapsedTimer
+		interval: 2000
+		running: root.state === "play"
+		repeat: true
+		onTriggered: updateElapsed()
+	}
+	function updateElapsed() {
+		MPDManager.sendCommand("status")
+	}
 	onVolume: (command, value) => {
 		if(command !== "status") {
 			volLoader.volume = value
 			volLoader.loading = true
 			ProcManager.playSound(root.volSound)
 		}
+	}
+	onPlayer: {
+		root.title = null
+		root.artist = null
+		root.file = null
+		root.album = null
+
+		sendCommand("status")
+		sendCommand("currentsong")
 	}
 	readonly property string volSound: "/usr/share/sounds/freedesktop/stereo/audio-volume-change.oga"
 	LazyLoader {
