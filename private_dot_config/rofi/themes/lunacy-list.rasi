@@ -1,0 +1,98 @@
+* {
+	font: "Terminus (TTF) Bold 18";
+	background-color: transparent;
+	text-color: @foreground;
+
+	bg: #000000aa;
+	bg2: #000000aa;
+	bg3: #29315Aaa;
+	bg4: #ffaafc44;
+
+	col1: #ffaafc;
+	col2: #29315A;
+	col3: #ffaafccc;
+	col4: #6472b8;
+
+	foreground: #ffffff;
+}
+window {
+	width: 20em;
+	height: 25em;
+	background-color: @bg;
+	border: 2px solid;
+	border-color: @col1;
+	children: [ message, horibox, vbox ];
+	spacing: 0;
+	border-radius: 0 10px 10px 10px;
+}
+horibox {
+	orientation: horizontal;
+	children: [prompt, entry];
+	spacing: 0;
+	expand: false;
+}
+vbox {
+	orientation: vertical;
+	children: [ listview ];
+	spacing: 0;
+}
+sidevbox {
+	orientation: vertical;
+	children: [ prompt, spacer ];
+	expand: false;
+	spacing: 0;
+}
+spacer {
+	background-color: @bg2;
+}
+
+textbox {
+	text-color: @foreground;
+}
+
+
+prompt {
+	background-color: @col2;
+	padding: 0.1em 0.4em 0.1em 0.1em;
+	text-color: @foreground;
+}
+entry {
+	padding: 0.1em 0.1em;
+	expand: false;
+	background-color: @bg;
+}
+element {
+	padding: 1em;
+}
+element selected {
+	background-color: @col3;
+}
+element-text active {
+	text-color: @col1;
+}
+element selected active {
+	background-color: @col4;
+}
+element-text {
+	text-color: @foreground;
+}
+element-icon {
+	padding: 0 0.2em;
+}
+
+listview {
+	background-color: @bg2;
+	padding: 0em 0.2em 0.1em 0em;
+}
+
+element alternate {
+	background-color: @bg3;
+}
+element-text {
+	vertical-align: 1.0;
+}
+message {
+	background-color: @bg3;
+	border: 0 0 1px 0;
+	border-color: @col1;
+}
