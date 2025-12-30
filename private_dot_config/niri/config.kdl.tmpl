@@ -360,9 +360,17 @@ workspace "chat" {
 	open-on-output "{{ .displays.niri.desktop.side }}"
 }
 {{else}}
-{{- range list "main" "dev" "browser" "gaming" "art" "scratch" "chat" -}}
-workspace "{{ . }}"
+{{with $mon := .displays.niri.desktop.main -}}
+{{- range list "home" "dev" "browser" "gaming" "art" "scratch" -}}
+workspace "{{ . }}" {
+	open-on-output "{{ $mon }}"
+}
 {{end}}
+{{- end}}
+
+workspace "chat" {
+	open-on-output "{{ .displays.niri.desktop.side }}"
+}
 {{end}}
 
 
