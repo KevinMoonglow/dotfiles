@@ -414,6 +414,10 @@ window-rule {
 	match app-id="^zen$" title=r#"^Extension: \(Bitwarden Password Manager\)"#
 	block-out-from "screen-capture"
 }
+window-rule {
+	match app-id="^Godot$" title=r#"\(DEBUG\)$"
+	open-floating true
+}
 
 
 
@@ -595,6 +599,13 @@ binds {
 	XF86AudioNext { spawn "mpc" "next"; }
 	XF86AudioPrev { spawn "mpc" "prev"; }
 
+	XF86Macro11 { spawn "veekeys" "1"; }
+	XF86Macro12 { spawn "veekeys" "2"; }
+	XF86Macro13 { spawn "veekeys" "3"; }
+	XF86Macro14 { spawn "veekeys" "4"; }
+	XF86Macro15 { spawn "veekeys" "left"; }
+	XF86Macro16 { spawn "veekeys" "right"; }
+	XF86Macro17 { spawn "veekeys" "press"; }
 
     // Open/close the Overview: a zoomed-out view of workspaces and windows.
     // You can also move the mouse into the top-left hot corner,
