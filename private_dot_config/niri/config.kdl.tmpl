@@ -109,6 +109,22 @@ output "{{ .displays.niri.desktop.side }}" {
 	backdrop-color "#171C32"
 	//variable-refresh-rate
 }
+output "eDP-2" {
+    //mode "2560x1600@240.000"
+    scale 1.3
+    transform "normal"
+    position x=0 y=1440
+	//focus-at-startup
+	backdrop-color "#171C32"
+}
+output "eDP-1" {
+    //mode "2560x1600@240.000"
+    scale 1.3
+    transform "normal"
+    position x=0 y=1440
+	//focus-at-startup
+	backdrop-color "#171C32"
+}
 {{end}}
 
 
@@ -783,6 +799,7 @@ binds {
 
     Mod+F { maximize-column; }
     Mod+Shift+F { fullscreen-window; }
+    Mod+Alt+F { toggle-windowed-fullscreen; }
     Mod+Ctrl+Shift+F { maximize-window-to-edges; }
 
     // Expand the focused column to space not taken up by other fully visible columns.

@@ -200,6 +200,7 @@ Scope {
 								implicitHeight: rightModules.height
 							}
 						}
+						BatModule { }
 						Volume { }
 						RamModule { }
 						Clock { }

@@ -25,7 +25,9 @@ if status is-interactive
         alias cd __zoxide_z
     end
 
-    if type -q oh-my-posh
+    if type -q starship
+        starship init fish | source
+    else if type -q oh-my-posh
         oh-my-posh init --config ~/.config/ohmyposh/luna.omp.toml fish | source
     end
 
