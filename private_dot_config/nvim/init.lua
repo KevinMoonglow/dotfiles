@@ -192,7 +192,7 @@ vim.lsp.config('lua_ls', {
 vim.lsp.config('qmlls', {
  	cmd = {"qmlls6", "-E"}
 })
-require('lspconfig').pyright.setup{}
+vim.lsp.enable('pyright')
 
 
 --lsp.setup()
