@@ -1,0 +1,13 @@
+#!/usr/bin/fish
+
+set -l track (math (mpc | pcregrep -o1 '^\[.*?]\s*#([0-9]+)/[0-9]+') - 1)
+
+echo -e "\0prompt\x1f󰝚 Music\n"
+#echo -e "\0keep-selection\x1ftrue\n"
+echo -e "\0active\x1f$track\n"
+
+if test ! -z "$argv[1]"
+    mpc play -q "$ROFI_INFO"
+    exit 0
+end
+~/.config/bin/formatted_mpc_playlist
