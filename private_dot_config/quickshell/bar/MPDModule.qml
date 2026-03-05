@@ -13,7 +13,11 @@ ModuleTab {
 		MPDManager.onStateChanged.connect(() => {updateTimer.restart() })
 	}
 	function updateDisplay() {
-		let display = MPDManager.title || MPDManager.file || null
+		let display = (
+			(MPDManager.title ? `<font color='#ffaafc'>${MPDManager.title}</font>` :'') ||
+			(MPDManager.file ? `<font color='#eeeeff'>${MPDManager.file}</font>` : '') || '') +
+		((MPDManager.album ? ` — <font color='#ccd1f6'>${MPDManager.album}</font>` : '') ||
+		 (MPDManager.artist ? ` — <font color='#9e72ff'>${MPDManager.artist}</font>` : ''))
 
 		switch(MPDManager.state) {
 			case "stop":
@@ -49,7 +53,7 @@ ModuleTab {
 		hovered: hover.hovered
 		message: {
 			(MPDManager.title || MPDManager.file) +
-			(MPDManager.album ? ` - ${MPDManager.album}` : '') +
+			(MPDManager.album ? ` — ${MPDManager.album}` : '') +
 			(MPDManager.artist ? ` (${MPDManager.artist})`:'')
 		}
 		item: parent
