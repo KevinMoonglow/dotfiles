@@ -1,0 +1,59 @@
+# Get editor completions based on the config schema
+"$schema" = 'https://starship.rs/config-schema.json'
+
+format = """
+[ $directory](prompt_fg bg:prompt_bg)[](prompt_bg)\
+($cmd_duration)$status\
+([](git_bg)[ $git_branch$git_commit$git_state](prompt_fg bg:git_bg)[](git_bg))\
+$fill\
+[](contrast)[ $shell](lunacy_pink bg:contrast)[](contrast)\
+([](contrast)[ $hostname ](lunacy_pink bg:contrast)[](contrast))
+$character"""
+
+
+palette = "lunacy"
+
+# Inserts a blank line between shell prompts
+add_newline = true
+
+[palettes.lunacy]
+prompt_fg = "#ffffff"
+prompt_bg = "#01579b"
+contrast = "#29315a"
+lunacy_pink = "#ffaafc"
+misc_bg = "#505a7f"
+err_bg = "#990055"
+git_bg = "#540086"
+
+[character] 
+success_symbol = '[❯](prompt_fg)'
+
+[directory]
+style = 'prompt_fg bg:prompt_bg'
+home_symbol = ' '
+truncation_symbol = '…/'
+
+[hostname]
+ssh_only = false
+format = "$hostname"
+
+[shell]
+disabled = false
+style = 'lunacy_pink bg:contrast'
+fish_indicator = "󰈺 "
+zsh_indicator = "%_ "
+bash_indicator = "󱆃 "
+
+[cmd_duration]
+format = '[](misc_bg)[ $duration ]($style)[](misc_bg)'
+style = 'prompt_fg bg:misc_bg'
+
+[status]
+format = '[](err_bg)[ $symbol $status ($common_meaning)(SIG$signal_name\($signal_number\)) ]($style)[](err_bg)'
+style = 'prompt_fg bg:err_bg'
+disabled = false
+symbol = ""
+
+[git_branch]
+format = '[$symbol$branch(:$remote_branch)]($style) '
+style = 'prompt_fg bg:git_bg'
