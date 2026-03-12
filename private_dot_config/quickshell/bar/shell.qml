@@ -13,7 +13,7 @@ Scope {
 	enum WorkspacePos { Bottom, Left, Right }
 
 	property bool visibleBars: true
-	property int workspacePos: root.WorkspacePos.Bottom
+	// property int workspacePos: root.WorkspacePos.Bottom
 
 	IpcHandler {
 		target: "bars"
@@ -177,6 +177,7 @@ Scope {
 							Layout.preferredHeight: parent.height
 							screen: modelData
 						}
+						HostModule {}
 						BindMode {}
 						FocusedWindowModule {}
 					}
