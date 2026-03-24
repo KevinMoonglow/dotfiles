@@ -63,6 +63,7 @@ input {
     // Focus windows and outputs automatically when moving the mouse into them.
     // Setting max-scroll-amount="0%" makes it work only on windows already fully on screen.
     focus-follows-mouse max-scroll-amount="0%"
+	disable-power-key-handling
 }
 
 {{ if eq .chezmoi.hostname "eevee" }}
@@ -70,23 +71,52 @@ output "eDP-1" {
     mode "1920x1080@60.03"
     scale 1
     transform "normal"
-    position x=0 y=0
+    position x=0 y=1440
 	focus-at-startup
 }
 output "{{ .displays.niri.desktop.main }}" {
-	mode "2560x1440@119.982"
+	mode "2560x1440@143.999"
 	scale 1
 	transform "normal"
-	position x=0 y=-1440
+	position x=0 y=0
 	backdrop-color "#171C32"
 	//variable-refresh-rate
 }
 output "{{ .displays.niri.desktop.side }}" {
-	mode "1920x1080@60"
+	mode "1920x1080@119.982"
 	scale 1
-	transform "90"
-	position x=1080 y=-840
+	transform "normal"
+	position x=2560 y=180
 	backdrop-color "#171C32"
+}
+{{ else if eq .chezmoi.hostname "shaymin" }}
+output "eDP-1" {
+    //mode "2560x1600@240.000"
+    scale 1.3
+    transform "normal"
+    position x=0 y=1440
+	//focus-at-startup
+	backdrop-color "#171C32"
+}
+output "{{ .displays.niri.desktop.main }}" {
+	mode "2560x1440@143.999"
+	//mode "2560x1440@59.951"
+	scale 1.0
+	transform "normal"
+	position x=0 y=0
+	backdrop-color "#171C32"
+	//variable-refresh-rate
+	focus-at-startup
+}
+output "{{ .displays.niri.desktop.side }}" {
+	//mode "1920x1080@119.982"
+	mode "1920x1080@144.013"
+	scale 1
+	//transform "90"
+	//position x=2560 y=-480
+	position x=2560 y=180
+	backdrop-color "#171C32"
+	//variable-refresh-rate
 }
 {{else}}
 output "{{ .displays.niri.desktop.main }}" {
@@ -622,6 +652,9 @@ binds {
 	XF86Macro15 { spawn "veekeys" "left"; }
 	XF86Macro16 { spawn "veekeys" "right"; }
 	XF86Macro17 { spawn "veekeys" "press"; }
+
+	XF86MonBrightnessUp { spawn "fish" "~/.config/bin/adjust_brightness" "10%+"; }
+	XF86MonBrightnessDown { spawn "fish" "~/.config/bin/adjust_brightness" "10%-"; }
 
     // Open/close the Overview: a zoomed-out view of workspaces and windows.
     // You can also move the mouse into the top-left hot corner,

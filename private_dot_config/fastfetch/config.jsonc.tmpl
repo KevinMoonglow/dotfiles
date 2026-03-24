@@ -1,0 +1,55 @@
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/master/doc/json_schema.json",
+  "modules": [
+  {
+	  "type": "title",
+	  "format": "{host-name-colored}"
+  },
+  {
+	  "type": "custom",
+	  "format": "━━━━━━━━━━━━"
+  },
+  {{ if eq .chezmoi.osRelease.id "nixos" }}
+  { "type": "os", "key": " ", "format": "{pretty-name}" },
+  {{ else if eq .chezmoi.osRelase.idLike "arch" }}
+  { "type": "os", "key": " ", "format": "{pretty-name} ({id-like})" },
+  {{ else if eq .chezmoi.os "linux" }}
+  { "type": "os", "key": " ", "format": "{pretty-name} ({id-like})" },
+  {{ else }}
+  { "type": "os", "key": "󰟀 ", "format": "{pretty-name} ({id-like})" },
+  {{ end }}
+    { "type": "kernel" , "key": " "},
+    { "type": "uptime", "key": "󰁫 " },
+    { "type": "packages", "key": "󰏖 " },
+    { "type": "shell", "key": " " },
+    { "type": "display", "key": "󰍹 " },
+    { "type": "de" },
+    { "type": "wm", "key": " " },
+    { "type": "wmtheme"  },
+    { "type": "theme", "key": "󱥚 "},
+    { "type": "icons", "key": " " },
+    { "type": "font", "key": " " },
+    { "type": "cursor", "key": " " },
+    { "type": "terminal", "key": " " },
+    { "type": "terminalfont", "key": ""},
+    { "type": "memory", "key": " " },
+    { "type": "swap", "key": "󰿢 " },
+    { "type": "disk", "key": "󰋊 " },
+    { "type": "locale", "key": " " },
+    "break",
+    "colors"
+  ],
+  "display": {
+	  "color": "#ffaafc"
+
+  },
+  "logo": {
+	  "type": "auto",
+	  {{ if eq .chezmoi.hostname "shaymin" }}
+	  "source": "pixel art/skystand-export.png",
+	  {{ else if eq .chezmoi.hostname "eevee" }}
+	  "source": "pixel art/eevee-upright.png",
+	  {{ end }}
+
+  },
+}

@@ -5,13 +5,50 @@ import Quickshell.Services.UPower
 
 ModuleTab {
 	id: root
+	implicitWidth: icon.width + 24
 	visible: UPower.displayDevice.isLaptopBattery
 	property int charge: Math.floor(UPower.displayDevice.percentage * 100)
 	border.color: "#80FF96"
 
+	states: State {
+		name: "long"
+		PropertyChanges {
+			batPercent.visible: true
+			root.implicitWidth: batPercent.width + icon.width + 24
+			batPercent.opacity: 1.0
+		}
+	}
+
+	MouseArea {
+		id: mouseArea
+		anchors.fill: parent
+		onClicked: (mouse) => {
+			root.state = root.state?"":"long"
+		}
+	}
+
+	transitions: [
+		Transition {
+			NumberAnimation {
+				targets: [root]
+				property: "implicitWidth"
+				duration: 200
+				easing.type: Easing.InOutQuad
+			}
+			PropertyAnimation {
+				targets: [batPercent]
+				property: "opacity"
+				duration: 400
+				easing.type: Easing.Linear
+			}
+		}
+	]
+
 	RowLayout {
+		id: layout
 		spacing: 8
 		SText {
+			id: icon
 			color: {
 				if(root.charge >= 50) "#80FF96"
 				else if(root.charge >= 25) "#FFF3B3"
@@ -47,6 +84,9 @@ ModuleTab {
 			}	
 		}
 		SText {
+			id: batPercent
+			visible: false
+			opacity: 0.0
 			color: {
 				if(root.charge >= 50) "#80FF96"
 				else if(root.charge >= 25) "#FFF3B3"
