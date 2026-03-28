@@ -6,11 +6,52 @@ import QtQuick.Layouts
 ModuleTab {
 	border.color: "#76D1FF"
 	implicitWidth: wrapper.width
+	property int maxLength: 99
+	property int textScroll: 0
+	property bool ticker: false
 	Component.onCompleted: {
 		print("!!", modelData.width)
 		MPDManager.onTitleChanged.connect(() => {updateTimer.restart() })
 		MPDManager.onFileChanged.connect(() => {updateTimer.restart() })
 		MPDManager.onStateChanged.connect(() => {updateTimer.restart() })
+	}
+	function nextChar(text, cursor, wrapped=false) {
+		let c = cursor
+		if(wrapped && cursor >= text.length - 1) c = 0
+		else c = cursor + 1
+
+		if(text[c] == "<") {
+			let locate = text.slice(c).search(">")
+			if(locate != -1) {
+				c += locate + 1
+			}
+		}
+		return c
+	}
+	function visualForward(str, start, length, wrapped=false) {
+		let n = start-1
+		for(let i=0;i<length+1;i++) {
+			n = nextChar(str, n, wrapped)
+		}
+		return n;
+	}
+	function visualTrim(str, start, length, wrapped=false) {
+		let end = visualForward(str, start, length, wrapped)
+
+		let newStr
+		if(end < start)
+			newStr = (str + str).slice(start, str.length + end)
+		else
+			newStr = str.slice(start, end)
+		
+		return newStr
+	}
+	function visualLength(str) {
+		let n = 0
+		for(let i=0;i<str.length;i=nextChar(str, i)) {
+			n++;			
+		}
+		return n;
 	}
 	function updateDisplay() {
 		let display = (
@@ -32,12 +73,33 @@ ModuleTab {
 				break
 		}
 
-		if(display) displayText.text = display
+		if(display) {
+			if(visualLength(display) > maxLength) {
+				ticker = true
+				displayText.text = visualTrim(display, textScroll, maxLength, true)
+			}
+			else {
+				ticker = false
+				textScroll = 0
+				displayText.text = display
+			}
+		}
 	}
 	Timer {
 		id: updateTimer
 		interval: 50
 		onTriggered: updateDisplay()
+	}
+	Timer {
+		id: scrollTimer
+		interval: 1000
+		running: false
+		repeat: true
+		onTriggered: {
+			if(ticker) {
+				updateDisplay()
+			}
+		}
 	}
 
 	Behavior on implicitWidth {

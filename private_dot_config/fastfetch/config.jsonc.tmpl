@@ -11,7 +11,7 @@
   },
   {{ if eq .chezmoi.osRelease.id "nixos" }}
   { "type": "os", "key": " ", "format": "{pretty-name}" },
-  {{ else if eq .chezmoi.osRelase.idLike "arch" }}
+  {{ else if eq .chezmoi.osRelease.idLike "arch" }}
   { "type": "os", "key": " ", "format": "{pretty-name} ({id-like})" },
   {{ else if eq .chezmoi.os "linux" }}
   { "type": "os", "key": " ", "format": "{pretty-name} ({id-like})" },

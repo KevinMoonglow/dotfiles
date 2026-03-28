@@ -79,7 +79,7 @@ input "type:pointer" {
 
 exec --no-startup-id dunst
 exec --no-startup-id copyq --start-server hide
-exec --no-startup-id swww-daemon
+exec --no-startup-id awww-daemon
 
 exec --no-startup-id xwayland-satellite :4
 

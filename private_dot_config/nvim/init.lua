@@ -126,12 +126,17 @@ require("lazy").setup({
 		-- Git interface
 		{'tpope/vim-fugitive'},
 
-		{'neovim/nvim-lspconfig', tag='v1.8.0', pin=true},
+		{'neovim/nvim-lspconfig', tag='v2.6.0', pin=true},
 		{'hrsh7th/cmp-nvim-lsp'},
 		{'hrsh7th/nvim-cmp'},
 
-		{'mason-org/mason.nvim', opts = {}},
-		{'mason-org/mason-lspconfig.nvim', opts = {}},
+		{'mason-org/mason-lspconfig.nvim',
+			opts = {},
+			dependencies = {
+				{'mason-org/mason.nvim', opts = {}},
+				'neovim/nvim-lspconfig',
+			},
+		},
 
 		-- Syntax for fish scripts
 		{'khaveesh/vim-fish-syntax'},
@@ -178,8 +183,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
 	end,
 })
 
-
-
 -- " (Optional) Configure lua language server for neovim
 --require('lspconfig').lua_ls.setup(lsp.nvim_lua_ls())
 vim.lsp.config('lua_ls', {
@@ -190,12 +193,9 @@ vim.lsp.config('lua_ls', {
 	}
 })
 vim.lsp.config('qmlls', {
- 	cmd = {"qmlls6", "-E"}
+ 	cmd = {"qmlls6", "-E"},
+	filetypes = { 'qml' },
 })
-vim.lsp.enable('pyright')
-
-
---lsp.setup()
 
 
 -- You need to setup `cmp` after lsp-zero

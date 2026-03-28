@@ -339,7 +339,7 @@ layout {
 //spawn-at-startup "sh" "-c" "waybar -c ~/.config/waybar/config-$HOSTNAME"
 spawn-at-startup "qs" "-c" "bar"
 //spawn-at-startup "xwayland-satellite" ":4"
-spawn-at-startup "swww-daemon"
+spawn-at-startup "awww-daemon"
 spawn-at-startup "copyq" "--start-server" "hide"
 spawn-at-startup "systemctl" "--user" "start" "plasma-polkit-agent"
 spawn-at-startup "hypridle"
@@ -597,6 +597,13 @@ window-rule {
     geometry-corner-radius 6
     clip-to-geometry true
 }
+
+gestures {
+	hot-corners {
+		off
+	}
+}
+
 
 binds {
     // Keys consist of modifiers separated by + signs, followed by an XKB key name
