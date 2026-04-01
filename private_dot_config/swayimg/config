@@ -1,0 +1,12 @@
+# vim: ft=cfg
+[general]
+size = 1920,1080
+decoration = no
+
+[viewer]
+transparency = #442544e0
+window = #000000a0
+antialiasing = box
+
+[gallery]
+background = #000000a0
