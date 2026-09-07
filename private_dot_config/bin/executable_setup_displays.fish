@@ -6,4 +6,6 @@ else if test (hostname) = "fennec"
 
 	#xrandr --output DP-2 --rotate left --mode 1920x1080 --rate 144 --pos 2560x0 --output DP-0 --primary --mode 2560x1440 --pos 0x480 -s 3640x1440
 	xrandr --output DP-2 --rotate normal --mode 1920x1080 --rate 144 --pos 2560x180 --output DP-0 --primary --mode 2560x1440 --pos 0x0 -s 3640x1440
+else if test (hostname) = "shaymin"
+	xrandr --output HDMI-1-0 --rotate normal --mode 1920x1080 --rate 144 --pos 2560x180 --output DP-1 --primary --mode 2560x1440 --pos 0x0 -s 3640x1440 --output eDP-1 --auto --output DVI-I-2-1 --auto --left-of DP-1
 end

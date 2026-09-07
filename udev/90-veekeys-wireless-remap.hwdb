@@ -1,0 +1,8 @@
+evdev:input:b0003v514Cp4155e0201*
+ KEYBOARD_KEY_700a5=macro11 # 1
+ KEYBOARD_KEY_700a6=macro12 # 2
+ KEYBOARD_KEY_700a7=macro13 # 3
+ KEYBOARD_KEY_700a8=macro14 # 4
+ KEYBOARD_KEY_700a9=macro15 # left
+ KEYBOARD_KEY_700aa=macro16 # right
+ KEYBOARD_KEY_700ab=macro17 # press

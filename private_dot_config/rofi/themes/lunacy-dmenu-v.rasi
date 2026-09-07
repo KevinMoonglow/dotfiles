@@ -1,5 +1,5 @@
 * {
-	font: "Terminus (TTF) Bold 18";
+	font: "Terminus Bold 18";
 	background-color: transparent;
 	text-color: @foreground;
 

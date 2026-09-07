@@ -11,7 +11,7 @@ Singleton {
 	property string focusedWindowTitle: ""
 	property bool running: I3.socketPath != null
 
-	property var ws_data: []
+	property list<var> ws_data: []
 	property var windows: []
 	property var focusedWindow: null
 	property string bindMode: "default"
@@ -20,9 +20,9 @@ Singleton {
 
 	function workspacesFor(screen: string): list<var> {
 		console.log(screen)
-		console.log("ws_data:", root.ws_data.length)
-		let x = root.ws_data?.filter(x => {
-			console.log("fff", x && x.output)
+		console.log("ws_data:", DesktopManager.ws_data.length)
+		let x = DesktopManager.ws_data?.filter(x => {
+			console.log("fff", x && x.output, x.name, x.is_active)
 			return x && x.output == screen
 		}) ?? []
 		x.sort((a, b) => a.idx - b.idx)
@@ -47,7 +47,7 @@ Singleton {
 		I3.dispatch(`focus down`)
 	}
 	function toggleOverview() {
-		I3.dispatch(`jump`)
+		I3.dispatch(`jump all all`)
 	}
 
 
@@ -58,10 +58,11 @@ Singleton {
 		})
 	}
 	function eventHandler(event) {
+		console.log("====", event.type)
 		if(event.type !== "workspace") return
 
 		let data = JSON.parse(event.data)
-		console.log(data.change)
+		console.log("change:", data.change)
 
 		let cid = parseInt(data.current.id)
 
@@ -75,7 +76,7 @@ Singleton {
 				type: "workspace",
 				orientation: data.current.orientation,
 				is_urgent: data.current.urgent,
-				is_active: data.current.active,
+				is_active: data.current.active ?? data.current.visible,
 				is_focused: data.current.focused,
 				output: data.current.output
 			}
@@ -92,6 +93,12 @@ Singleton {
 			root.ws_data[cid].is_focused = true
 			root.ws_data[cid].is_active = true
 
+			console.log("@@", cid)
+
+			console.log(root.ws_data[oid].is_active, root.ws_data[cid].is_active)
+
+			root.ws_data = root.ws_data
+			root.ws_data[cid] = root.ws_data[cid]
 
 			//console.log(data.old.focused, data.current.focused)
 			//console.log(data.old.active, data.current.active)
@@ -151,6 +158,19 @@ Singleton {
 			}
 		}
 	}
+	Process {
+		running: false
+		id: workspaceSupplement
+		command: ['i3-msg', '-t', 'get_workspaces']
+		stdout: StdioCollector {
+			onStreamFinished: {
+				let data = JSON.parse(this.text)
+				for(let wsd of data) {
+					
+				}
+			}
+		}
+	}
 	function parseTreeItem(data: var) {
 		console.log(`type: ${data.type}; id: ${data.id}; name: ${data.name}; app_id: ${data.app_id}; output: ${data.output}`)
 
@@ -163,11 +183,14 @@ Singleton {
 				type: "workspace",
 				orientation: data.orientation,
 				is_urgent: data.urgent,
-				is_active: data.active,
+				//is_active: "choose",
 				is_focused: data.focused,
 				output: data.output
 			}
-			console.log("xxx", root.ws_data.length)
+			for(let [k, v] of Object.entries(data)) {
+				console.log("fxxx", k, v)
+			}
+			//console.log("xxx", root.ws_data[parseInt(data.id)].is_active)
 			workspaceUpdate(root.ws_data)
 		}
 		else if(data.type === "con" && data.app_id !== null) {

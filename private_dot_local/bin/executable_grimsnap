@@ -1,0 +1,202 @@
+#!/usr/bin/env fish
+
+set -g use_notify
+set -g show_cursor
+set -g freeze
+set -g wait_time
+set -g picker
+set -g app_id
+
+
+function sel_region
+    slurp -cFFAAFC -bFFAAFC22 -w2 $argv
+end
+function freeze_view
+    hyprpicker -q -z -r $argv &
+    set -g picker $last_pid
+end
+function notify -a title message
+    notify-send -t 3000 -a grimsnap $title $message
+end
+function notify_error -a message
+    notify-send -t 3000 -a grimsnap Screenshot $message
+end
+
+function report -a title message
+    if [ -n "$use_notify" ]
+        notify $title $message
+    else
+        echo $message
+    end
+end
+
+function report_error
+    if [ -n "$use_notify" ]
+        notify_error "$argv"
+    end
+    echo "$argv" >&2
+end
+
+function select_area
+    set -l cursor ""
+    if [ -n "$show_cursor" ]
+        set cursor "-c"
+    end
+
+    freeze_view $cursor
+    sleep 0.2
+
+    sel_region -d
+end
+
+function select_active_window
+    set -l focused (swaymsg -t get_tree | jq -r 'recurse(.nodes[]?, .floating_nodes[]?) | select(.focused)')
+    set app_id (echo "$focused" | jq -r '.app_id')
+    echo "$focused" | jq -r '.rect | "\(.x),\(.y) \(.width)x\(.height)"'
+end
+
+
+function select_window
+    swaymsg -t get_tree | jq -r '.. | select(.pid? and .visible?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"' | sel_region -r
+end
+
+function select_output
+    swaymsg -t get_outputs | jq -r '.[] | select(.focused)' | jq -r '.name'
+end
+
+function select_anything
+    swaymsg -t get_tree | jq -r '.. | select(.pid? and .visible?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"' | sel_region -o
+end
+
+function select_by_target -a target
+    switch $target
+        case active
+            select_active_window
+        case all
+            echo ""
+        case output
+            select_output
+        case area
+            select_area
+            if [ -n "$picker" ]
+                if pgrep --quiet -p "$picker" hyprpicker
+                    kill $picker
+                end
+            end
+        case window
+            select_window
+        case anything
+            select_anything
+        case '*'
+            report_error "Unknown target: $target"
+            exit 1
+    end
+end
+
+function doSnap -a target geometry filename
+    if [ -n "$filename" ]
+        mkdir -p (dirname $filename)
+    end
+    if [ -n "$show_cursor" ]
+        set -f cursor "-c"
+    end
+    switch $target
+        case active area window anything
+            grim $cursor -g $geometry $filename
+        case all
+            grim $cursor $filename
+        case output
+            grim $cursor -o $geometry $filename
+        case '*'
+            report_error "Unknown target: $target"
+            exit 1
+    end
+    if [ $status -ne 0 ]
+        report_error "Failed to capture screenshot."
+        exit 1
+    end
+end
+
+function doScreenshotSave -a target filename
+    if doSnap $target (select_by_target $target) $filename
+        report "Screenshot of $target" (basename $filename)
+    else
+        return 1
+    end
+end
+function doScreenshotCopy -a target filename
+    if [ -n "$filename" ]
+        if not wl-copy --type image/png <"$filename"
+            report_error "Clipboard error."
+        end
+    else
+        doSnap $target (select_by_target $target) - | wl-copy --type image/png
+        if [ $status -ne 0 ]
+            report_error "Clipboard error."
+        else
+            report "Screenshot of $target" "$target saved to clipboard."
+        end
+    end
+end
+        
+
+
+argparse 'h/help' 'n/notify' 'c/cursor' 'f/freeze' 'w/wait=' -- $argv
+
+if set -q _flag_help
+    echo "\
+Usage: grimsnap [--notify] [--cursor] [--wait N] COMMAND TARGET [FILE|-]
+
+Commands:
+  copy
+  save
+  ....\
+"
+  exit 0
+end
+
+if set -q _flag_freeze
+    set freeze yes
+end
+
+if set -q _flag_notify
+    set use_notify yes
+end
+
+if set -q _flag_wait
+    set wait_time _flag_wait
+end
+
+set -l target $argv[2]
+if [ -z "$target" ]
+    set target all
+end
+
+set -l filename $argv[3]
+if [ -z "$filename" ]
+    #set filename (getTargetDirectory)/(date -Ins)
+end
+    
+
+
+switch $argv[1]
+    case save
+        if [ -z "$filename" ]
+            report_error "No filename."
+            exit 1
+        end
+        doScreenshotSave $target $filename
+    case copy
+        doScreenshotCopy $target
+    case savecopy
+        if [ -z "$filename" ]
+            report_error "No filename."
+            exit 1
+        end
+        if doScreenshotSave $target $filename
+            doScreenshotCopy $target $filename
+        end
+    case '*'
+        report_error "Unknown command: $argv[1]"
+        exit 1
+end

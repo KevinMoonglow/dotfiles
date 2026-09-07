@@ -58,11 +58,11 @@ client.unfocused        #000000dd  #00000055  #ffffff  #ffffff    #000000aa
 client.urgent           #aa4444aa  #000000aa  #ffffff  #ffffff    #aa4444aa
 client.placeholder      #000000aa  #ffaaddaa  #ffffff  #000000    #ffaaddaa
 
-default_border pixel 2
-default_floating_border pixel 2
+default_border pixel 4
+default_floating_border pixel 4
 gaps inner 8
-smart_borders on
-smart_gaps off
+#smart_borders on
+#smart_gaps off
 focus_follows_mouse no
 #hide_edge_borders smart
 

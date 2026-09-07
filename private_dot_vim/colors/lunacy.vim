@@ -12,81 +12,89 @@ endif
 set background=dark
 let g:colors_name = "lunacy"
 
-highlight Normal       guifg=Grey75       guibg=black
-highlight Search           guifg=yellow       guibg=blue
-highlight Visual                              guibg=darkslateblue
-highlight Cursor           guifg=Black        guibg=#00FF00     gui=bold
-highlight CursorColumn                        guibg=Gray15
-highlight CursorLine                          guibg=Gray15
-highlight Special          guifg=Orange
-highlight Comment          guifg=#80a0ff
-highlight VertSplit        guifg=navyblue     guibg=slategray   gui=reverse
-highlight StatusLine       guifg=navyblue     guibg=white       gui=reverse
-highlight StatusLineNC     guifg=Gray40       guibg=white       gui=reverse
-highlight StatusLineTerm   guifg=darkgreen    guibg=white       gui=reverse
-highlight StatusLineTermNC guifg=gray5        guibg=white       gui=reverse
-highlight Statement        guifg=White                          gui=NONE
-highlight Type             guifg=LightGreen                     gui=none
-highlight Identifier       guifg=Cyan
-highlight Constant         guifg=Yellow
-highlight String           guifg=Yellow
-highlight Number           guifg=#00FF00
-highlight PreProc          guifg=#00FF00
-highlight Operator         guifg=LightGreen
-highlight Error            guifg=Yellow       guibg=DarkRed
-highlight Folded           guifg=White        guibg=DarkBlue
-highlight Pmenu            guifg=White        guibg=Black
-highlight PmenuSel         guifg=White        guibg=Blue
-highlight MatchParen       guifg=White        guibg=Blue
-highlight NonText          guifg=#8888FF                        gui=BOLD
-highlight SpecialKey       guifg=Cyan
-highlight Conceal          guifg=Cyan         guibg=NONE
-highlight LineNr           guifg=#999999      guibg=#000044
-highlight SignColumn       guifg=#999999      guibg=#000044
-highlight TabLineFill      guifg=white        guibg=navy        gui=none
-highlight TabLine          guifg=white        guibg=navy        gui=none
-highlight TabLineSel       guifg=yellow       guibg=blue        gui=none
-highlight Title            guifg=#00FF00                        gui=Underline   guisp=#00FF00
+
+highlight Normal           guifg=#ccd1f6      guibg=black
+highlight CurSearch		   guifg=#ffc5fc      guibg=#022A80
+highlight Search           guifg=#ffe766      guibg=#022A80
+highlight Visual                              guibg=#29315a
+highlight Cursor           guifg=Black        guibg=#ffc5fc     gui=bold
+highlight CursorColumn                        guibg=#505a7f
+highlight CursorLine                          guibg=#505a7f
+highlight Special          guifg=#ffa333
+highlight Comment          guifg=#80aaff
+highlight VertSplit        guifg=#022a80      guibg=#505a7f     gui=reverse
+highlight StatusLine       guifg=#01579b      guibg=#eeeeff     gui=reverse
+highlight StatusLineNC     guifg=#29315a      guibg=#eeeeff     gui=reverse
+highlight StatusLineTerm   guifg=#6aaf76      guibg=#eeeeff     gui=reverse
+highlight StatusLineTermNC guifg=#3f7448      guibg=#eeeeff     gui=reverse
+highlight Statement        guifg=#eeeeff                        gui=NONE
+highlight Type             guifg=#80ff96                        gui=NONE
+highlight Identifier       guifg=#76d1ff
+highlight Function         guifg=#76d1ff
+highlight @variable        guifg=#43c0ff
+highlight Constant         guifg=#ffaafc
+highlight String           guifg=#ffaafc
+highlight Number           guifg=#80ff96
+highlight PreProc          guifg=#3f7448
+highlight Operator         guifg=#6aaf76
+highlight Error            guifg=#ffe766      guibg=#990055
+highlight Folded           guifg=#eeeeff      guibg=#29315a
+highlight Pmenu            guifg=#eeeeff      guibg=#29315a
+highlight PmenuSel         guifg=#dd65dd      guibg=#eeeeff
+highlight MatchParen       guifg=#eeeeff      guibg=#dd65dd
+highlight NonText          guifg=#bb89ff                        gui=BOLD
+highlight SpecialKey       guifg=#76d1ff
+highlight Conceal          guifg=#76d1ff      guibg=NONE
+highlight LineNr           guifg=#ccd1f6      guibg=#00004b
+highlight SignColumn       guifg=#ccd1f6      guibg=#00004b
+highlight TabLineFill      guifg=#eeeeff      guibg=#29315a     gui=none
+highlight TabLine          guifg=#eeeeff      guibg=#01579b     gui=none
+highlight TabLineSel       guifg=#eeeeff      guibg=#dd65dd     gui=none
+highlight Title            guifg=#ffaafc                        gui=Underline   guisp=#ffaafc
 highlight Underlined       guifg=fg                             gui=Underline   guisp=fg
-highlight FloatBorder      guifg=white        guibg=NONE
-highlight Todo             guifg=yellow  	  guibg=blue        gui=Underline
+highlight FloatBorder      guifg=#eeeeff      guibg=NONE
+highlight Todo             guifg=#ffe766  	  guibg=#29315a     gui=Underline
 
 
 " Console
-highlight Normal           ctermfg=LightGrey  ctermbg=black
-highlight Search           ctermfg=yellow     ctermbg=darkblue  cterm=NONE
+highlight Normal           ctermfg=189        ctermbg=black
+highlight CurSearch		   ctermfg=219        ctermbg=18
+highlight Search           ctermfg=221        ctermbg=18        cterm=NONE
 highlight Visual           ctermbg=61
-highlight Cursor           ctermfg=Black      ctermbg=Green     cterm=bold
+highlight Cursor           ctermfg=Black      ctermbg=219       cterm=bold
 highlight CursorColumn                        ctermbg=235
 highlight CursorLine                          ctermbg=235
-highlight Special          ctermfg=214                          cterm=bold
+highlight Special          ctermfg=215                          cterm=bold
 highlight Comment          ctermfg=111
-highlight VertSplit        ctermfg=17         ctermbg=103       cterm=reverse
-highlight StatusLine       ctermfg=17         ctermbg=White
-highlight StatusLineNC     ctermfg=242        ctermbg=White
-highlight StatusLineTerm   ctermfg=darkgreen  ctermbg=white     cterm=reverse
-highlight StatusLineTermNC ctermfg=233        ctermbg=white     cterm=reverse
+highlight VertSplit        ctermfg=18         ctermbg=235       cterm=reverse
+highlight StatusLine       ctermfg=25         ctermbg=White
+highlight StatusLineNC     ctermfg=61         ctermbg=White
+highlight StatusLineTerm   ctermfg=71         ctermbg=white     cterm=reverse
+highlight StatusLineTermNC ctermfg=65         ctermbg=white     cterm=reverse
 highlight Statement        ctermfg=White
-highlight Type             ctermfg=LightGreen                   cterm=NONE
-highlight Identifier       ctermfg=Cyan
-highlight Constant         ctermfg=Yellow
-highlight String           ctermfg=Yellow
-highlight Number           ctermfg=Green
-highlight PreProc          ctermfg=Green
-highlight Operator         ctermfg=LightGreen
-highlight Error            ctermfg=Yellow     ctermbg=DarkRed
-highlight Folded           ctermfg=White      ctermbg=DarkBlue
-highlight Pmenu            ctermfg=White      ctermbg=Black
-highlight PmenuSel         ctermfg=White      ctermbg=Blue
-highlight MatchParen       ctermfg=white      ctermbg=Blue
-highlight NonText          ctermfg=105	      cterm=bold
-highlight SpecialKey       ctermfg=Cyan
-highlight Conceal          ctermfg=Cyan                         cterm=NONE
-highlight LineNr           ctermfg=246        ctermbg=17
-highlight SignColumn       ctermfg=246        ctermbg=17
-highlight TabLineFill      ctermfg=17         ctermbg=white     cterm=reverse
-highlight TabLine          ctermfg=white      ctermbg=17        cterm=none
-highlight TabLineSel       ctermfg=yellow     ctermbg=darkblue  cterm=none
-highlight Title            ctermfg=green                        cterm=underline
+highlight Type             ctermfg=84                           cterm=NONE
+highlight Identifier       ctermfg=117
+highlight Function         ctermfg=117
+highlight Constant         ctermfg=219
+highlight String           ctermfg=219
+highlight Number           ctermfg=71
+highlight PreProc          ctermfg=65
+highlight Operator         ctermfg=84
+highlight Error            ctermfg=221        ctermbg=125
+highlight Folded           ctermfg=White      ctermbg=61
+highlight Pmenu            ctermfg=White      ctermbg=18
+highlight PmenuSel         ctermfg=170        ctermbg=white
+highlight MatchParen       ctermfg=white      ctermbg=170
+highlight NonText          ctermfg=141	      cterm=bold
+highlight SpecialKey       ctermfg=117
+highlight Conceal          ctermfg=117                          cterm=NONE
+highlight LineNr           ctermfg=white      ctermbg=18
+highlight SignColumn       ctermfg=white      ctermbg=18
+highlight TabLineFill      ctermfg=18         ctermbg=white     cterm=reverse
+highlight TabLine          ctermfg=white      ctermbg=25        cterm=none
+highlight TabLineSel       ctermfg=246        ctermbg=170       cterm=none
+highlight Title            ctermfg=219                          cterm=underline
+highlight Underlined	   ctermfg=fg                           cterm=underline
 highlight FloatBorder      ctermfg=white      ctermbg=NONE
+highlight Todo			   ctermfg=221        ctermbg=18
 

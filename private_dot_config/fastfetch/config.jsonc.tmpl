@@ -11,6 +11,12 @@
   },
   {{ if eq .chezmoi.osRelease.id "nixos" }}
   { "type": "os", "key": " ", "format": "{pretty-name}" },
+  {{ else if eq .chezmoi.osRelease.id "gentoo" }}
+  { "type": "os", "key": " ", "format": "{pretty-name}" },
+  {{ else if eq .chezmoi.osRelease.id "artix" }}
+  { "type": "os", "key": " ", "format": "{pretty-name}" },
+  {{ else if eq .chezmoi.osRelease.id "cachyos" }}
+  { "type": "os", "key": " ", "format": "{pretty-name}" },
   {{ else if eq .chezmoi.osRelease.idLike "arch" }}
   { "type": "os", "key": " ", "format": "{pretty-name} ({id-like})" },
   {{ else if eq .chezmoi.os "linux" }}

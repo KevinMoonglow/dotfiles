@@ -45,7 +45,12 @@ Rectangle {
 	}
 
 	HoverText {
-		message: modelData.name
+		message: {
+			for(let [k, v] of Object.entries(modelData)) {
+				console.log("||", k, v)
+			}
+			return `${modelData.name} - ${modelData.is_active} ${Object.keys(modelData).join()}`
+		}
 		item: root
 		gravity: Edges.Top
 		edges: Edges.Top

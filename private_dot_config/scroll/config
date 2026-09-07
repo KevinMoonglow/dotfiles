@@ -6,7 +6,7 @@
 #
 # Read `man 5 scroll` for a complete reference.
 
-include /etc/scroll/config.d/*
+#include /etc/scroll/config.d/*
 
 ### Variables
 #
@@ -94,11 +94,16 @@ exec --no-startup-id swayidle -w
 exec --no-startup-id qs -c bar
 exec_always ~/.local/bin/laptop_toggle.sh
 
+exec systemctl --user import-environment WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP SWAYSOCK I3SOCK XCURSOR_SIZE XCURSOR_THEME
+
+seat seat0 xcursor_theme Bibata-Modern-Classic 28
+
 ### Windows defaults
+default_decoration border_radius 6 shadow true shadow_dynamic false shadow_size 1 shadow_blur 4 shadow_offset 8 8
 default_border pixel 4
 default_floating_border pixel 4
-gaps inner 4px
-gaps outer 4px
+gaps inner 8px
+gaps outer 8px
 #client.focused #15439e #000000 #e0e0e0 #2e9ef4 #15439e
 #client.focused_inactive #595959 #000000 #e0e0e0 #2e9ef4 #595959
 #client.unfocused #595959 #000000 #e0e0e0 #2e9ef4 #595959
@@ -109,7 +114,8 @@ workspace_next_on_output_create_empty true
 focus_follows_mouse full
 align_reset_auto false
 popup_during_fullscreen smart
-#fullscreen_on_request layout
+fullscreen_on_request layout
+cursor_shake_magnify false
 
 #class                  border     bg         text     indicator  child_border
 client.focused          #af00afaa  #CA7DC788  #ffffff  #ffaafc    #ffaaddcc
@@ -210,7 +216,7 @@ animations {
 	bindsym $mod+shift+j move down
 	bindsym $mod+bracketleft move left nomode
 	bindsym $mod+bracketright move right nomode
-	bindsym $mod+semicolon [urgent=oldest] focus
+	#bindsym $mod+semicolon [urgent=oldest] focus
 
 	#bindsym $mod+p focus parent
 	#bindsym $mod+shift+p focus child
@@ -246,14 +252,18 @@ animations {
 #
 set $wm_mode ""
 mode "$wm_mode" {
-	bindsym w exec rofi -modi window -show window; mode default
-	bindsym b border toggle 2
+	bindsym w exec rofi -modi window -show window -theme-str "window {width: 50em; margin: 0 0 8px 18px;} listview {}"; mode default 
+	bindsym b border toggle 4
 	bindsym i exec notify-send "$(swaymsg -t get_tree | jq -rC '.. | try select(.focused == true) | "name: " + .name, "app_id: " + .app_id, "shell: " + .shell, "class: " + .window_properties.class, "instance: " + .window_properties.class')"; mode default
 
+
+	bindsym f mode "fit_size"
 
 	bindsym Escape mode "default"
 }
 bindsym $mod+d mode "$wm_mode"
+
+bindsym $mod+slash exec rofi -modi window -show window -location 6 -theme-str "window {width: 50em; margin: 0 0 8px 18px;} listview {}"
 
 
 
@@ -272,10 +282,10 @@ bindsym $mod+d mode "$wm_mode"
 	#set $ws10 "10:󰇥⁰"
 	set $ws1 "1:home"
 	set $ws2 "2:dev"
-	set $ws3 "3:chat"
-	set $ws4 "4:browser"
-	set $ws5 "5:gaming"
-	set $ws6 "6:art"
+	set $ws3 "3:browser"
+	set $ws4 "4:gaming"
+	set $ws5 "5:art"
+	set $ws6 "6:chat"
 	set $ws7 "7::"
 	set $ws8 "8::󰤇"
 	set $ws9 "9::󱌧"
@@ -342,8 +352,8 @@ bindsym $mod+d mode "$wm_mode"
     jump_labels_scale 0.5
     jump_labels_keys 12345
     bindsym --no-repeat $mod+ctrl+tab jump
-    #bindsym --no-repeat $mod+Shift+slash jump container
-    #bindsym --no-repeat $mod+Ctrl+slash jump workspaces
+    bindsym --no-repeat $mod+Shift+slash jump container
+    bindsym --no-repeat $mod+Ctrl+slash jump workspaces
     bindsym --no-repeat $mod+Ctrl+q jump floating
 
     # Content
@@ -357,7 +367,7 @@ bindsym $mod+d mode "$wm_mode"
 # Layout stuff:
 #
     # Make the current focus fullscreen
-    bindsym $mod+Shift+f fullscreen
+    bindsym $mod+Shift+f fullscreen layout
 	#bindsym $mod+Ctrl+f fullscreen global
     #bindsym $mod+Alt+f fullscreen_application toggle
     #bindsym $mod+Ctrl+Alt+f fullscreen_application reset
@@ -555,29 +565,29 @@ mode "󰘞 align [lazy]" {
 bindsym $mod+shift+c mode "󰘞 align [lazy]"
 
 mode "󰘞 align" {
-    bindsym c align center; set_mode center_horiz nocenter_vert reorder_auto; mode default
-    bindsym m align middle; set_mode center_horiz center_vert reorder_auto ; mode default
-    bindsym v set_mode nocenter_horiz center_vert reorder_auto ; mode default
-    bindsym r set_mode nocenter_horiz nocenter_vert reorder_auto; mode default
-    bindsym $left align left; set_mode nocenter_horiz nocenter_vert reorder_auto; mode default
-    bindsym $right align right; set_mode nocenter_horiz nocenter_vert reorder_auto; mode default
-    bindsym $up align up; set_mode nocenter_horiz nocenter_vert reorder_auto; mode default
-    bindsym $down align down; set_mode nocenter_horiz nocenter_vert reorder_auto; mode default
-    bindsym h align left; set_mode nocenter_horiz nocenter_vert reorder_auto; mode default
-    bindsym l align right; set_mode nocenter_horiz nocenter_vert reorder_auto; mode default
-    bindsym k align up; set_mode nocenter_horiz nocenter_vert reorder_auto; mode default
-    bindsym j align down; set_mode nocenter_horiz nocenter_vert reorder_auto; mode default
+    bindsym c align center; set_mode center_horiz nocenter_vert reorder_auto; align reset; mode default
+    bindsym m align middle; set_mode center_horiz center_vert reorder_auto; align reset; mode default
+    bindsym v set_mode nocenter_horiz center_vert reorder_auto; align reset; mode default
+    bindsym r set_mode nocenter_horiz nocenter_vert reorder_auto; align reset; mode default
+    bindsym $left align left; set_mode nocenter_horiz nocenter_vert reorder_auto; align reset; mode default
+    bindsym $right align right; set_mode nocenter_horiz nocenter_vert reorder_auto; align reset; mode default
+    bindsym $up align up; set_mode nocenter_horiz nocenter_vert reorder_auto; align reset; mode default
+    bindsym $down align down; set_mode nocenter_horiz nocenter_vert reorder_auto; align reset; mode default
+    bindsym h align left; set_mode nocenter_horiz nocenter_vert reorder_auto; align reset; mode default
+    bindsym l align right; set_mode nocenter_horiz nocenter_vert reorder_auto; align reset; mode default
+    bindsym k align up; set_mode nocenter_horiz nocenter_vert reorder_auto; align reset; mode default
+    bindsym j align down; set_mode nocenter_horiz nocenter_vert reorder_auto; align reset; mode default
     bindsym Escape mode "default"
 }
 bindsym $mod+c mode "󰘞 align"
 mode "fit_size" {
-    bindsym w fit_size h visible proportional; mode default
-    bindsym Shift+w fit_size v visible proportional; mode default
-    bindsym Ctrl+w fit_size h visible equal; mode default
-    bindsym Ctrl+Shift+w fit_size v visible equal; mode default
+    bindsym f fit_size h visible proportional; mode default
+    bindsym Shift+f fit_size v visible proportional; mode default
+    bindsym Ctrl+f fit_size h visible equal; mode default
+    bindsym Ctrl+Shift+f fit_size v visible equal; mode default
 
     bindsym $right fit_size h toend proportional; mode default
-    bindsym Shift+$right fit_size v toend proportional; mode default
+    bindsym Shift+$right fit_size v toend proportional; mode dfault
     bindsym Ctrl+$right fit_size h toend equal; mode default
     bindsym Ctrl+Shift+$right fit_size v toend equal; mode default
 
@@ -597,7 +607,6 @@ mode "fit_size" {
     bindsym Ctrl+Shift+$down fit_size v all equal; mode default
     bindsym Escape mode "default"
 }
-#bindsym $mod+w mode "fit_size"
 
 mode "trailmark" {
     bindsym bracketright trailmark next
@@ -605,7 +614,7 @@ mode "trailmark" {
     bindsym semicolon trailmark toggle; mode default
     bindsym Escape mode "default"
 }
-#bindsym $mod+semicolon mode "trailmark"
+bindsym $mod+semicolon mode "trailmark"
 
 mode "trail" {
     bindsym bracketright trail next
@@ -616,7 +625,7 @@ mode "trail" {
     bindsym insert trail to_selection; mode default
     bindsym Escape mode "default"
 }
-#bindsym $mod+Shift+semicolon mode "trail"
+bindsym $mod+Shift+semicolon mode "trail"
 
 mode "spaces" {
     bindsym 1 space load 1; mode default
@@ -694,9 +703,9 @@ mode "󰹑 Screenshot" {
 	#bindsym 2 exec hyprshot -m output -m "DP-2" -o "$screenshots" -f "$(date '+%Y-%m-%d_%H-%M-%S.%N%z')_screenshot_side.png"; mode "default"
 	#bindsym s exec hyprshot -m output -z -o "$screenshots" -f "$(date '+%Y-%m-%d_%H-%M-%S.%N%z')_screenshot.png"; mode "default"
 	#bindsym w exec hyprshot -m "active" -m "window" -o "$screenshots" -f "$(date '+%Y-%m-%d_%H-%M-%S.%N%z')_screenshot_$(swaymsg -t get_tree | jq -r '..|try select(.focused == true).app_id').png"; mode "default"
-	bindsym r exec grimshot --notify savecopy area "$screenshots/$(date '+%Y-%m-%d_%H-%M-%S.%N%z')_clip.png"; mode "default"
-	bindsym s exec grimshot --notify savecopy output "$screenshots/$(date '+%Y-%m-%d_%H-%M-%S.%N%z')_screenshot.png"; mode "default"
-	bindsym w exec grimshot --notify savecopy active "$screenshots/$(date '+%Y-%m-%d_%H-%M-%S.%N%z')_screenshot_$(swaymsg -t get_tree | jq -r '..|try select(.focused == true).app_id').png"; mode "default"
+	bindsym r exec mkdir -p "$screenshots/$(date '+%Y/%Y-%m')"; exec grimsnap --notify savecopy area "$screenshots/$(date '+%Y/%Y-%m/%Y-%m-%d %H-%M-%S.%N%z') clip.png"; mode "default"
+	bindsym s exec mkdir -p "$screenshots/$(date '+%Y/%Y-%m')"; exec grimsnap --notify savecopy output "$screenshots/$(date '+%Y/%Y-%m/%Y-%m-%d %H-%M-%S.%N%z') screenshot.png"; mode "default"
+	bindsym w exec mkdir -p "$screenshots/$(date '+%Y/%Y-%m')"; exec grimsnap --notify savecopy active "$screenshots/$(date '+%Y/%Y-%m/%Y-%m-%d %H-%M-%S.%N%z') $(swaymsg -t get_tree | jq -r '..|try select(.focused == true).app_id').png"; mode "default"
 
 	bindsym Escape mode "default"
 }
@@ -715,7 +724,7 @@ bindgesture swipe:4:left workspace prev
 
 bindgesture swipe:4:up scale_workspace overview 
 
-set $laptop eDP-2
+set $laptop eDP-1
 bindswitch --reload --locked lid:on output $laptop disable
 bindswitch --reload --locked lid:off output $laptop enable
 
@@ -729,11 +738,15 @@ for_window [class="^steam$" title="^Friends List$"] set_size h 0.2
 
 
 for_window [shell="xwayland"] title_format " %title"
-for_window [app_id="^com\\.github\\.hluk\\.copyq$"] floating enable
+for_window [app_id="^com\\.github\\.hluk\\.copyq$"] floating enable, set_size h 0.65, set_size v 0.9, move position center
 for_window [instance="Godot"] floating enable
 for_window [instance="Godot" title="Godot"] floating enable
 for_window [title="(DEBUG)$"] floating enable
 for_window [title="^$" app_id="^$" class="^$"] floating enable, move position cursor
+for_window [app_id="^zen$"] border pixel
+
+assign [app_id="^zen$"] → workspace $ws3
+assign [class="^steam$"] → workspace $ws4
 
 
 #

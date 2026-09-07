@@ -8,8 +8,8 @@ Singleton {
 	id: root
 	property string bindMode: backend.bindMode
 	property var backend: {
-		console.log("@@", MangoManager.running)
 		if(NiriManager.running) return NiriManager
+		else if(HyprManager.running) return HyprManager
 		else if(MangoManager.running) return MangoManager
 		else if(I3Manager.running) return I3Manager
 		else return null

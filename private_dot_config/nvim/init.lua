@@ -1,7 +1,7 @@
 --============================================================================
 --======== Base Vim Options===================================================
 vim.g.mapleader = " "
-vim.g.maplocalleader = "\\"
+vim.g.maplocalleader = " "
 vim.keymap.set("n", "<leader>-", vim.cmd.Ex)
 
 vim.keymap.set("n", "<leader>bn", vim.cmd.bnext)
@@ -33,7 +33,7 @@ o.shell = "/bin/bash"
 vim.env.SHELL = "/bin/bash"
 
 vim.cmd.aunmenu "PopUp.How-to\\ disable\\ mouse"
-vim.cmd.aunmenu "PopUp.-1-"
+vim.cmd.aunmenu "PopUp.-2-"
 
 
 -- Display title in gui
@@ -47,6 +47,9 @@ o.shiftwidth = 4
 -- Better line wrapping
 o.linebreak = true
 
+
+-- Keep the cursor this many lines from the top or bottom.
+o.scrolloff = 4
 
 o.showbreak = "<   "
 o.listchars = "tab:» "
@@ -63,7 +66,6 @@ o.relativenumber = true
 o.numberwidth = 5
 
 o.termguicolors = true
-
 
 o.backupdir = vim.fn.expand("~/.local/state/nvim/backup")
 
@@ -84,6 +86,12 @@ vim.g.Hexokinase_alpha_bg = '#000000'
 
 ------------------------------------------------------------
 
+vim.api.nvim_create_autocmd('TextYankPost', {
+	desc = 'Highlight on yank.',
+	callback = function()
+		vim.hl.on_yank()
+	end,
+})
 
 o.isfname = "@,48-57,/,.,-,_,+,,,#,$,%,~"
 
@@ -162,11 +170,20 @@ require("lazy").setup({
 		{'fladson/vim-kitty'},
 		{'2kabhishek/nerdy.nvim'},
 
-		{'alker0/chezmoi.vim'},
+		{
+			'alker0/chezmoi.vim',
+			lazy = false,
+			init = function()
+				vim.g['chezmoi#use_tmp_buffer'] = true
+			end,
+		},
 	},
 
 	install = { colorscheme = {"lunacy"} },
-	checker = {enabled = true},
+	checker = {
+		enabled = true,
+		notify = false,
+	},
 })
 
 local lsp_def = require('lspconfig').util.default_config
@@ -180,6 +197,14 @@ vim.api.nvim_create_autocmd('LspAttach', {
 	desc = 'LSP actions',
 	callback = function(event)
 		local opts = {buffer = event.buf}
+	end,
+})
+
+vim.api.nvim_create_autocmd({'BufNewFile', 'BufRead'}, {
+	pattern = {'*.bashrc'},
+	callback = function(_event)
+		vim.o.filetype = "sh"
+		vim.b.is_bash = 1
 	end,
 })
 
@@ -241,19 +266,26 @@ function Luna.userColors()
 
 							ctermfg=241, ctermbg="white"})
 
-	hi(0, "User1", {fg="#dd65dd", bg="#29315a", ctermfg=170, ctermbg=17})
-	hi(0, "User2", {fg="white",   bg="#29315a", ctermfg="white", ctermbg=17})
-	hi(0, "User3", {fg="#dd65dd", bg="#aa35aa", ctermfg=170, ctermbg=127})
-	hi(0, "User4", {fg="white",   bg="#aa35aa", ctermfg="white", ctermbg=127})
-	hi(0, "User5", {fg="#aa35aa", bg="#29315a", ctermfg=127, ctermbg=17})
+	hi(0, "User1", {bg="#dd65dd", fg="#29315a", ctermfg=170, ctermbg=17})
+	hi(0, "User2", {bg="white",   fg="#29315a", ctermfg="white", ctermbg=17})
+	hi(0, "User3", {bg="#dd65dd", fg="#aa35aa", ctermfg=170, ctermbg=127})
+	hi(0, "User4", {bg="white",   fg="#aa35aa", ctermfg="white", ctermbg=127})
+	hi(0, "User5", {bg="#aa35aa", fg="#29315a", ctermfg=127, ctermbg=17})
 
 	hi(0, "WhichKey", {link="String"})
-	hi(0, "WhichKeySeperator", {link="Comment"})
+	hi(0, "WhichKeySeparator", {link="Comment"})
 	hi(0, "WhichKeyGroup", {link="Keyword"})
 	hi(0, "WhichKeyDesc", {link="Function"})
 	hi(0, "WhichKeyNormal", {link="User1"})
 	hi(0, "WhichKeyTitle", {link="User2"})
 	hi(0, "WhichKeyBorder", {link="User1"})
+
+	hi(0, "LunaModeNormal", {fg="black", bg="#eeeeff", nocombine=true})
+	hi(0, "LunaModeInsert", {fg="black", bg="#6aaf76", nocombine=true})
+	hi(0, "LunaModeVisual", {fg="yellow", bg="#29315a", nocombine=true})
+	hi(0, "LunaModeCommand", {fg="#6aaf76", bg="#29315a", nocombine=true})
+	hi(0, "LunaModeTermNorm", {fg="#6aaf76", bg="#3f7448", nocombine=true})
+	hi(0, "LunaModeTerminal", {fg="#80ff96", bg="#3f7448", nocombine=true})
 
 	--hi(0, "WhichKeyFloating", {fg="fg", bg="navy", ctermbg=17})
 end
@@ -278,6 +310,7 @@ vim.api.nvim_create_autocmd({"BufReadPost"}, {
 	group = "Luna__setup",
 })
 
+vim.o.showmode = false;
 vim.api.nvim_create_autocmd({"FileType"}, {
 	pattern = "dashboard",
 	callback = function()
@@ -287,15 +320,105 @@ vim.api.nvim_create_autocmd({"FileType"}, {
 	group = "Luna__setup",
 })
 
+local modeDisplay = {
+	n        = " NORM",
+	no       = " OP  ",
+	nov      = " OP v",
+	noV      = " OP V",
+	["no"] = " OP^V",
+	niI      = " ins ",
+	niR      = " rep ",
+	niV      = " vrep",
+	nt       = " NORM",
+	ntT      = " term",
+	v        = "󰦩 VIS ",
+	vs       = "󰦩 sel ",
+	V        = " LINE",
+	Vs       = " sel ",
+	[""]   = "󰒅 BLOC",
+	["s"]  = "󰒅 sel ",
+	s        = "󰦩 SEL ",
+	S        = " SEL ",
+	[""]   = "󰒅 SEL ",
+	i        = " INS ",
+	ic       = " INS ",
+	ix       = " INS ",
+	R        = " REP ",
+	Rc       = " REP ",
+	Rx       = " REP ",
+	Rv       = " VREP",
+	Rvc      = " VREP",
+	Rvx      = " VREP",
+	c        = " CMD ",
+	cr       = " OVR ",
+	cv       = " CMD ", -- Probably never visible
+	r        = "❯ ENTR",
+	rm       = " MORE",
+	["r?"]   = "❯ PRPT",
+	["!"]    = " SHEL",
+	t        = " TERM",
+}
+local modeColors = {
+	n = "LunaModeNormal",
+	no = "LunaModeNormal",
+	nov = "LunaModeVisual",
+	noV = "LunaModeVisual",
+	["no"] = "LunaModeVisual",
+	niI = "LunaModeCommand",
+	niR = "LunaModeCommand",
+	niV = "LunaModeCommand",
+	nt = "LunaModeTermNorm",
+	ntT = "LunaModeTermNorm",
+	v = "LunaModeVisual",
+	vs = "LunaModeVisual",
+	V = "LunaModeVisual",
+	Vs = "LunaModeVisual",
+	[""] = "LunaModeVisual",
+	["s"] = "LunaModeVisual",
+	i = "LunaModeInsert",
+	c = "LunaModeCommand",
+	t = "LunaModeTerminal",
+}
 
-vim.o.statusline = [[%<%f %h%m%r%1*%*%2*]] ..
-               [[%=%5*%4*%4P %3*%*%14.(%l,%c%V%)]]
+
+
+
+
+Luna.makeStatusLine = function()
+	local mode = vim.api.nvim_get_mode().mode
+	local modeText = modeDisplay[mode] or mode
+	local modeCol = modeColors[mode] or "StatusLine"
+
+	return table.concat({
+		[[%#]],
+		modeCol,
+		[[# ]],
+		modeText,
+		[[ %* %<%f %h%m%r%1*%*%2*]],
+		[[%=%5*%4*%4P %3*%*%14.(%l,%c%V%)]]
+	}, "")
+end
+
+
+vim.api.nvim_create_user_command('LunaStatusLine', Luna.makeStatusLine, {})
+
+vim.o.statusline = [[%!v:lua.Luna.makeStatusLine()]]
+--vim.o.statusline = [[%<%f %h%m%r%1*%*%2*]] ..
+--               [[%=%5*%4*%4P %3*%*%14.(%l,%c%V%)]]
 
 
 
 require'nvim-treesitter.configs'.setup{
 	ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "javascript", "typescript" },
-	highlight = {enable=true},
+	highlight = {
+		enable=true,
+		disable = function()
+			-- check if 'filetype' option includes 'chezmoitmpl'
+			if string.find(vim.bo.filetype, 'chezmoitmpl') then
+				return true
+			end
+		end,
+	},
 }
 
 
@@ -384,6 +507,7 @@ vim.keymap.set("v", "<A-j>", ":m '>+1<CR>gv", {desc = "Shift Lines Down"})
 vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv", {desc = "Shift Lines Up"})
 
 vim.keymap.set("n", "<leader>?", function() vim.cmd.WhichKey("''") end, {desc = "List Keybinds"})
+
 
 --vim.keymap.set("i", "<D-.>", "", {})
 

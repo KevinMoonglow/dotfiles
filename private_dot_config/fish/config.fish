@@ -31,9 +31,19 @@ if status is-interactive
         oh-my-posh init --config ~/.config/ohmyposh/luna.omp.toml fish | source
     end
 
-    if type -q exa
+    if type -q eza
+        set -g __fish_ls_command eza
+        set -g __fish_ls_indicators_opt -F --icons=always --hyperlink=auto
+    else if type -q exa
         set -g __fish_ls_command exa
-        set -g __fish_ls_indicators_opt -F --icons=always --hyperlink
+        set -g __fish_ls_indicators_opt -F --icons=always --hyperlink=auto
+    end
+
+    # For getting home manager to work
+    if test -e "/$HOME/.nix-profile"
+        if type -q fenv and test -f "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" then
+            fenv source "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
+        end
     end
 
     # Based on https://github.com/badania/scriptz/blob/master/utility/linux-framebuffer-colors.sh

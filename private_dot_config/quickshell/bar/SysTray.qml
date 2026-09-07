@@ -65,7 +65,7 @@ Rectangle {
 				visible: {
 					if(!sysTray.hideMode) true
 					else if(modelData.status === Status.NeedsAttention) true
-					else if(modelData.id === "nm-applet") false
+					//else if(modelData.id === "nm-applet") false
 					else if(modelData.id === "polychromatic-tray-applet") false
 					else if(modelData.id === "blueman") false
 					else if(modelData.status === Status.Passive) false

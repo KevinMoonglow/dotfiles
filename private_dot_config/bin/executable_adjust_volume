@@ -1,5 +1,12 @@
 #!/usr/bin/env fish
-set -f vol_sound /usr/share/sounds/freedesktop/stereo/audio-volume-change.oga
+
+if test -d /run/current-system/sw/
+    set -f sys_root /run/current-system/sw
+else
+    set -f sys_root /usr
+end
+
+set -f vol_sound $sys_root/share/sounds/freedesktop/stereo/audio-volume-change.oga
 
 if test $argv[1] = "mpd" -o $argv[1] = "mpc"
     set -f change $argv[2]

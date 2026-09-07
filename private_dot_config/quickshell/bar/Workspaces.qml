@@ -46,9 +46,7 @@ Rectangle {
 		Repeater {
 			model: ScriptModel {
 				values: {
-					console.log("=======", DesktopManager.ws_data.length)
-					//return DesktopManager.ws_data?.filter(x => x && x.output == screen.name) ?? []
-					return DesktopManager.workspacesFor(screen.name)
+					return DesktopManager.ws_data && DesktopManager.workspacesFor(screen.name)
 				}
 			}
 			WorkspaceButton {

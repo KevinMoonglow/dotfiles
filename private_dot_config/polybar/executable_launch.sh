@@ -29,6 +29,15 @@ elif [[ "$(hostname)" == "fennec" ]]; then
 		MONITOR=DP-1 polybar $lbar 2>&1 | tee -a /tmp/polybar1.log & disown
 		MONITOR=DP-3 polybar $rbar 2>&1 | tee -a /tmp/polybar2.log & disown
 	fi
+elif [[ "$(hostname)" == "shaymin" ]]; then
+	if [[ -z "$WAYLAND_DISPLAY" ]]; then
+		MONITOR=DP-1 polybar $lbar 2>&1 | tee -a /tmp/polybar1.log & disown
+		MONITOR=HDMI-1-0 polybar $rbar 2>&1 | tee -a /tmp/polybar2.log & disown
+		MONITOR=eDP-1 polybar $lbar 2>&1 | tee -a /tmp/polybar3.log & disown
+	else
+		MONITOR=DP-1 polybar $lbar 2>&1 | tee -a /tmp/polybar1.log & disown
+		MONITOR=DP-2 polybar $rbar 2>&1 | tee -a /tmp/polybar2.log & disown
+	fi
 fi
 
 echo "Bars launched..."

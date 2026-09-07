@@ -6,7 +6,7 @@ import QtQuick.Layouts
 ModuleTab {
 	border.color: "#76D1FF"
 	implicitWidth: wrapper.width
-	property int maxLength: 99
+	property int maxLength: 90000
 	property int textScroll: 0
 	property bool ticker: false
 	Component.onCompleted: {
@@ -166,7 +166,7 @@ ModuleTab {
 				color: "#76D1FF"
 				wrapMode: Text.NoWrap
 				elide: Text.ElideRight
-				Layout.maximumWidth: 600
+				Layout.maximumWidth: screen.width*0.20
 				Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
 				Behavior on text {
 					SequentialAnimation {

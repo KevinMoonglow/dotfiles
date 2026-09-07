@@ -9,6 +9,7 @@ ModuleTab {
 	id: root
 	border.color: "#76d1ff"
 	RowLayout {
+		spacing: 2
 		SText {
 			color: osLogoGetter.color
 			text: `${osLogoGetter.logo}`
@@ -20,6 +21,7 @@ ModuleTab {
 			source: {
 				switch(hostnameGetter.hostname) {
 					case "eevee": "root:assets/eevee-icon.png"; break;
+					case "shaymin": "root:assets/shaymin-icon.png"; break;
 					default: "";
 				}
 			}
@@ -64,9 +66,20 @@ ModuleTab {
 							osLogoGetter.color = "#88aaff"
 							break
 						case "cachyos":
+							osLogoGetter.logo = ""
+							osLogoGetter.color = "#80ff96"
+							break
 						case "archlinux-logo":
 							osLogoGetter.logo = ""
 							osLogoGetter.color = "#2966b9"
+							break
+						case "gentoo":
+							osLogoGetter.logo = ""
+							osLogoGetter.color = "#9e72ff"
+							break
+						case "artixlinux-logo":
+							osLogoGetter.logo = ""
+							osLogoGetter.color = "#76d1ff"
 							break
 						default:
 							osLogoGetter.logo = "";
